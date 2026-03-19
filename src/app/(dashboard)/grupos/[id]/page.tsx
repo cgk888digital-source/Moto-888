@@ -47,6 +47,15 @@ export default async function GrupoPage({ params }: { params: Promise<{ id: stri
               <h1 className="font-display text-2xl font-bold text-text-base tracking-wide">
                 {grupo.nombre}
               </h1>
+              {esAdmin && (
+                <Link
+                  href={`/grupos/${id}/editar`}
+                  className="ml-auto p-1.5 rounded-lg text-text-muted hover:text-accent hover:bg-accent/10 transition-colors"
+                  title="Editar grupo"
+                >
+                  ✏️
+                </Link>
+              )}
               <span className={`text-xs px-2 py-0.5 rounded-full font-body ${
                 grupo.tipo === 'publico'
                   ? 'bg-green-900/40 text-green-400'

@@ -31,6 +31,32 @@ export async function createEvento(formData: FormData) {
   redirect(`/eventos/${data.id}`)
 }
 
+export async function updateEvento(eventoId: string, formData: FormData) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: 'No autenticado' }
+
+  const titulo = (formData.get('titulo') as string)?.trim()
+  const descripcion = (formData.get('descripcion') as string)?.trim()
+  const fecha_hora = formData.get('fecha_hora') as string
+  const punto_partida = (formData.get('punto_partida') as string)?.trim()
+  const cupos_max = formData.get('cupos_max') ? Number(formData.get('cupos_max')) : null
+
+  if (!titulo || !fecha_hora) return { error: 'Título y fecha son requeridos' }
+
+  const { error } = await supabase
+    .from('eventos')
+    .update({ titulo, descripcion, fecha_hora, punto_partida, cupos_max })
+    .eq('id', eventoId)
+    .eq('creador_id', user.id)
+
+  if (error) return { error: error.message }
+
+  revalidatePath(`/eventos/${eventoId}`)
+  revalidatePath('/eventos')
+  redirect(`/eventos/${eventoId}`)
+}
+
 export async function setAsistencia(eventoId: string, respuesta: 'voy' | 'tal_vez' | 'no_voy', anterior: string | null) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()

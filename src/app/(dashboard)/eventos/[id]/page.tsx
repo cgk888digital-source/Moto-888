@@ -40,6 +40,15 @@ export default async function EventoPage({ params }: { params: Promise<{ id: str
               <h1 className="font-display text-2xl font-bold text-text-base tracking-wide">
                 {evento.titulo}
               </h1>
+              {esCreador && (
+                <Link
+                  href={`/eventos/${id}/editar`}
+                  className="ml-auto p-1.5 rounded-lg text-text-muted hover:text-accent hover:bg-accent/10 transition-colors"
+                  title="Editar evento"
+                >
+                  ✏️
+                </Link>
+              )}
               {yaFue ? (
                 <span className="text-xs px-2 py-0.5 rounded-full font-body bg-border text-text-muted">
                   Finalizado
