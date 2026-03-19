@@ -3,18 +3,20 @@ import { getStripe } from '@/lib/stripe'
 import { createClient } from '@supabase/supabase-js'
 import Stripe from 'stripe'
 
-// Webhook usa service role — no cookies
-const supabaseAdmin = createClient(
-  process.env.NEXT_PUBLIC_SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY!
-)
+export const dynamic = 'force-dynamic'
+
+function getSupabaseAdmin() {
+  return createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  )
+}
 
 export async function POST(req: NextRequest) {
   const body = await req.text()
   const sig = req.headers.get('stripe-signature') ?? ''
 
   let event: Stripe.Event
-
   const stripe = getStripe()
 
   try {
@@ -28,30 +30,25 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid signature' }, { status: 400 })
   }
 
+  const supabaseAdmin = getSupabaseAdmin()
+
   try {
     switch (event.type) {
       case 'checkout.session.completed': {
         const session = event.data.object as Stripe.Checkout.Session
         const userId = session.metadata?.supabase_user_id
         if (userId) {
-          await supabaseAdmin
-            .from('users')
-            .update({ plan: 'pro' })
-            .eq('id', userId)
+          await supabaseAdmin.from('users').update({ plan: 'pro' }).eq('id', userId)
         }
         break
       }
-
       case 'customer.subscription.deleted': {
         const sub = event.data.object as Stripe.Subscription
         const customer = await stripe.customers.retrieve(sub.customer as string)
         if (!customer.deleted) {
           const userId = customer.metadata?.supabase_user_id
           if (userId) {
-            await supabaseAdmin
-              .from('users')
-              .update({ plan: 'free' })
-              .eq('id', userId)
+            await supabaseAdmin.from('users').update({ plan: 'free' }).eq('id', userId)
           }
         }
         break
