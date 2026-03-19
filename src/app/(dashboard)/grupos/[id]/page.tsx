@@ -3,6 +3,7 @@ import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
 import { getGrupo, isMiembro } from '@/features/grupos/queries'
 import { toggleMembership } from '@/features/grupos/actions'
+import { GrupoFotos } from './GrupoFotos'
 
 export default async function GrupoPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -10,15 +11,22 @@ export default async function GrupoPage({ params }: { params: Promise<{ id: stri
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  const [grupo, miembro] = await Promise.all([
+  const [grupo, miembro, fotosResult] = await Promise.all([
     getGrupo(id),
     isMiembro(id, user.id),
+    supabase
+      .from('grupo_fotos')
+      .select('id, url, descripcion, user_id, created_at')
+      .eq('grupo_id', id)
+      .order('created_at', { ascending: false }),
   ])
 
   if (!grupo) notFound()
 
   const esAdmin = grupo.admin_id === user.id
+  const esMiembro = miembro || esAdmin
   const adminNombre = (grupo as any).admin?.nombre ?? 'Admin'
+  const fotos = fotosResult.data ?? []
 
   async function handleToggle() {
     'use server'
@@ -91,6 +99,14 @@ export default async function GrupoPage({ params }: { params: Promise<{ id: stri
           <p className="mt-4 text-center text-xs text-accent font-body">⭐ Eres el administrador de este grupo</p>
         )}
       </div>
+
+      {/* Galería de fotos */}
+      <GrupoFotos
+        grupoId={id}
+        userId={user.id}
+        esMiembro={esMiembro}
+        initialFotos={fotos}
+      />
 
       <Link
         href="/grupos"

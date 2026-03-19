@@ -28,6 +28,12 @@ export type Database = {
         Update: { created_at?: string | null; follower_id?: string; following_id?: string }
         Relationships: []
       }
+      grupo_fotos: {
+        Row: { id: string; grupo_id: string; user_id: string; url: string; descripcion: string | null; created_at: string | null }
+        Insert: { id?: string; grupo_id: string; user_id: string; url: string; descripcion?: string | null; created_at?: string | null }
+        Update: { id?: string; grupo_id?: string; user_id?: string; url?: string; descripcion?: string | null; created_at?: string | null }
+        Relationships: []
+      }
       grupo_miembros: {
         Row: { created_at: string | null; grupo_id: string; rol: string | null; user_id: string }
         Insert: { created_at?: string | null; grupo_id: string; rol?: string | null; user_id: string }
