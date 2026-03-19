@@ -1,0 +1,132 @@
+import { NextRequest, NextResponse } from 'next/server'
+import { GoogleGenerativeAI } from '@google/generative-ai'
+import { createClient } from '@/lib/supabase/server'
+import { MANUAL_KNOWLEDGE } from '@/lib/knowledge'
+
+const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY ?? '')
+
+function buildSystemPrompt(motoCtx: string, historialCtx: string): string {
+  return `Eres MotoSafe AI, un mecánico experto en motocicletas con 20 años de experiencia.
+Estás hablando con el dueño de esta moto: ${motoCtx}
+
+${historialCtx}
+
+---
+MANUAL DE REFERENCIA (BASA TUS RESPUESTAS EN ESTO):
+${MANUAL_KNOWLEDGE}
+---
+
+REGLAS:
+- Responde SIEMPRE en español, de forma clara y directa
+- Eres conversacional: puedes hacer preguntas de seguimiento para entender mejor el problema
+- Cuando tengas suficiente información para un diagnóstico, termina tu respuesta con un bloque JSON así:
+
+\`\`\`json
+{"nivel_urgencia":"bajo|medio|alto|critico","resumen":"una frase corta del diagnóstico"}
+\`\`\`
+
+Niveles de urgencia:
+- bajo: puede seguir usando la moto, revisar pronto
+- medio: revisar esta semana, no posponer más
+- alto: no usar la moto hasta revisar
+- critico: peligro inmediato, detener la moto ya
+
+Si aún no tienes suficiente información, NO incluyas el bloque JSON — solo pregunta.`
+}
+
+export async function POST(req: NextRequest) {
+  try {
+    const supabase = await createClient()
+    const { data: { user } } = await supabase.auth.getUser()
+    if (!user) return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
+
+    // Check plan
+    const { data: profile } = await supabase
+      .from('users')
+      .select('plan')
+      .eq('id', user.id)
+      .single()
+
+    if (profile?.plan === 'free') {
+      return NextResponse.json({ error: 'El chat requiere plan Pro' }, { status: 403 })
+    }
+
+    const { moto_id, messages } = await req.json() as {
+      moto_id: string
+      messages: Array<{ role: 'user' | 'assistant'; content: string }>
+    }
+
+    if (!moto_id || !messages?.length) {
+      console.log('DEBUG: Faltan campos:', { moto_id, messagesCount: messages?.length })
+      return NextResponse.json({ error: 'Faltan campos requeridos' }, { status: 400 })
+    }
+
+    console.log('DEBUG: Moto ID:', moto_id)
+
+    // Contexto de la moto
+    const { data: moto } = await supabase
+      .from('motos')
+      .select('marca, modelo, ano, km_actuales, tipo_aceite, es_nueva')
+      .eq('id', moto_id)
+      .eq('user_id', user.id)
+      .single()
+
+    if (!moto) return NextResponse.json({ error: 'Moto no encontrada' }, { status: 404 })
+
+    const motoCtx = `${moto.marca} ${moto.modelo} ${moto.ano} | ${moto.km_actuales.toLocaleString()} km | aceite ${moto.tipo_aceite} | ${moto.es_nueva ? 'moto nueva' : 'segunda mano'}`
+
+    // Últimos mantenimientos como contexto
+    const { data: mantenimientos } = await supabase
+      .from('mantenimientos')
+      .select('tipo_servicio, km_al_servicio, fecha, proximo_km')
+      .eq('moto_id', moto_id)
+      .order('fecha', { ascending: false })
+      .limit(3)
+
+    const historialCtx = mantenimientos?.length
+      ? `Últimos servicios registrados:\n${mantenimientos.map(m =>
+          `- ${m.tipo_servicio} a los ${m.km_al_servicio.toLocaleString()} km (${m.fecha})${m.proximo_km ? ` → próximo a los ${m.proximo_km.toLocaleString()} km` : ''}`
+        ).join('\n')}`
+      : 'Sin historial de mantenimientos registrado.'
+
+    // Convertir todo el historial al formato de Gemini
+    const history = messages.map(m => ({
+      role: m.role === 'assistant' ? 'model' as const : 'user' as const,
+      parts: [{ text: m.content }],
+    }))
+
+    const lastMessage = history.pop() // El último mensaje se envía por separado
+
+    const model = genAI.getGenerativeModel({
+      model: 'gemini-flash-latest',
+      systemInstruction: buildSystemPrompt(motoCtx, historialCtx),
+    })
+
+    const chat = model.startChat({ history })
+    const result = await chat.sendMessage(lastMessage!.parts[0].text)
+    const responseText = result.response.text()
+
+    // Detectar si hay diagnóstico embebido
+    const jsonMatch = responseText.match(/```json\s*(\{[\s\S]*?\})\s*```/)
+    let diagnostico: { nivel_urgencia: string; resumen: string } | null = null
+
+    if (jsonMatch) {
+      try {
+        diagnostico = JSON.parse(jsonMatch[1])
+      } catch {
+        // ignorar parse errors
+      }
+    }
+
+    // Limpiar el JSON del texto para no mostrarlo crudo al usuario
+    const cleanText = responseText.replace(/```json[\s\S]*?```/g, '').trim()
+
+    return NextResponse.json({
+      reply: cleanText,
+      diagnostico, // null si no hay diagnóstico aún
+    })
+  } catch (err: any) {
+    console.error('Error en chat AI:', err)
+    return NextResponse.json({ error: 'Error interno del servidor' }, { status: 500 })
+  }
+}

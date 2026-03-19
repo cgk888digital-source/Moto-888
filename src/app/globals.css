@@ -1,0 +1,76 @@
+@import url('https://fonts.googleapis.com/css2?family=Oswald:wght@400;500;600;700&family=Barlow:wght@300;400;500;600&display=swap');
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --bg: #0c0c0c;
+  --surface: #161616;
+  --surface-2: #1e1e1e;
+  --border: #2a2a2a;
+  --accent: #f59e0b;
+  --accent-hover: #d97706;
+  --text: #f0f0f0;
+  --text-muted: #737373;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+html,
+body {
+  background-color: var(--bg);
+  color: var(--text);
+  font-family: 'Barlow', sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+}
+::-webkit-scrollbar-track {
+  background: var(--surface);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--border);
+  border-radius: 3px;
+}
+
+/* Input base */
+.input-base {
+  @apply w-full bg-surface-2 border border-border rounded-lg px-4 py-3 text-text-base placeholder-text-muted
+         focus:outline-none focus:border-accent transition-colors font-body text-sm;
+}
+
+/* Input field (forms) */
+.input-field {
+  @apply w-full bg-surface border border-border rounded-xl px-4 py-3 text-text-base placeholder:text-text-muted
+         focus:outline-none focus:border-accent transition-colors font-body text-sm;
+}
+
+.label-field {
+  @apply block text-xs font-display font-semibold uppercase tracking-wider text-text-muted mb-2;
+}
+
+/* Animations */
+@keyframes fade-in {
+  from { opacity: 0; transform: translateY(6px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in {
+  animation: fade-in 0.25s ease-out;
+}
+
+/* Button variants */
+.btn-primary {
+  @apply bg-accent hover:bg-accent-hover text-black font-display font-semibold tracking-wide
+         px-6 py-3 rounded-lg transition-all duration-200 disabled:opacity-40 disabled:cursor-not-allowed
+         uppercase text-sm;
+}
+
+.btn-ghost {
+  @apply text-text-muted hover:text-text-base border border-border hover:border-text-muted
+         px-6 py-3 rounded-lg transition-all duration-200 font-body text-sm;
+}
