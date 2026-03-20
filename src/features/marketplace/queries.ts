@@ -76,6 +76,41 @@ export async function getMisProductos(vendedorId: string): Promise<Producto[]> {
   return (data ?? []) as Producto[]
 }
 
+export async function getMisCompras(compradorId: string) {
+  const supabase = await createClient()
+  const { data } = await supabase
+    .from('marketplace_transacciones')
+    .select(`
+      id, precio_base, comision_monto, total_pagado, estado, created_at,
+      producto:marketplace_productos!marketplace_transacciones_producto_id_fkey(id, titulo, fotos),
+      vendedor:marketplace_vendedores!marketplace_transacciones_vendedor_id_fkey(id, nombre_tienda)
+    `)
+    .eq('comprador_id', compradorId)
+    .order('created_at', { ascending: false })
+  return (data ?? []) as any[]
+}
+
+export async function getResenasByTransaccion(transaccionIds: string[]) {
+  if (transaccionIds.length === 0) return []
+  const supabase = await createClient()
+  const { data } = await supabase
+    .from('marketplace_resenas')
+    .select('transaccion_id')
+    .in('transaccion_id', transaccionIds)
+  return (data ?? []).map((r: any) => r.transaccion_id as string)
+}
+
+export async function getResenasByVendedor(vendedorId: string) {
+  const supabase = await createClient()
+  const { data } = await supabase
+    .from('marketplace_resenas')
+    .select('id, rating, comentario, created_at')
+    .eq('vendedor_id', vendedorId)
+    .order('created_at', { ascending: false })
+    .limit(20)
+  return data ?? []
+}
+
 export async function getMensajes(productoId: string, userId: string) {
   const supabase = await createClient()
   const { data } = await supabase

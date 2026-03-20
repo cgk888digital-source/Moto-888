@@ -1,6 +1,8 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect } from 'next/navigation'
 import { getProfile, getMisMotos } from '@/features/motos/queries'
+import { getFollowStats } from '@/features/follows/queries'
+import { getRutas } from '@/features/rutas/queries'
 import { PerfilForm } from '@/features/auth/components/PerfilForm'
 import { signOut } from '@/features/auth/actions'
 import Link from 'next/link'
@@ -31,7 +33,12 @@ export default async function PerfilPage() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  const [profile, motos] = await Promise.all([getProfile(), getMisMotos()])
+  const [profile, motos, followStats, misRutas] = await Promise.all([
+    getProfile(),
+    getMisMotos(),
+    getFollowStats(user.id),
+    getRutas({ userId: user.id }),
+  ])
   const plan = (profile?.plan ?? 'free') as keyof typeof PLAN_CONFIG
   const planCfg = PLAN_CONFIG[plan]
 
@@ -76,18 +83,22 @@ export default async function PerfilPage() {
       </section>
 
       {/* Stats rápidos */}
-      <div className="grid grid-cols-2 gap-3">
-        <div className="bg-surface border border-border rounded-xl px-4 py-4">
+      <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
+        <div className="bg-surface border border-border rounded-xl px-4 py-4 text-center">
+          <p className="font-display text-2xl font-bold text-text-base">{motos.length}</p>
           <p className="text-xs text-text-muted font-body uppercase tracking-wider">Motos</p>
-          <p className="font-display text-2xl font-bold text-text-base mt-1">{motos.length}</p>
         </div>
-        <div className="bg-surface border border-border rounded-xl px-4 py-4">
-          <p className="text-xs text-text-muted font-body uppercase tracking-wider">Miembro desde</p>
-          <p className="font-display text-sm font-bold text-text-base mt-1">
-            {new Date(profile?.created_at ?? user.created_at).toLocaleDateString('es-ES', {
-              month: 'short', year: 'numeric',
-            })}
-          </p>
+        <div className="bg-surface border border-border rounded-xl px-4 py-4 text-center">
+          <p className="font-display text-2xl font-bold text-text-base">{misRutas.length}</p>
+          <p className="text-xs text-text-muted font-body uppercase tracking-wider">Rutas</p>
+        </div>
+        <div className="bg-surface border border-border rounded-xl px-4 py-4 text-center">
+          <p className="font-display text-2xl font-bold text-accent">{followStats.seguidores}</p>
+          <p className="text-xs text-text-muted font-body uppercase tracking-wider">Seguidores</p>
+        </div>
+        <div className="bg-surface border border-border rounded-xl px-4 py-4 text-center">
+          <p className="font-display text-2xl font-bold text-text-base">{followStats.siguiendo}</p>
+          <p className="text-xs text-text-muted font-body uppercase tracking-wider">Siguiendo</p>
         </div>
       </div>
 

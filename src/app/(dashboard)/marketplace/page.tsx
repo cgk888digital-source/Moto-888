@@ -28,6 +28,9 @@ export default async function MarketplacePage({ searchParams }: Props) {
           Market<span className="text-accent">place</span>
         </h1>
         <div className="flex gap-2">
+          <Link href="/marketplace/mis-compras" className="btn-ghost text-xs px-3 py-2">
+            Mis compras
+          </Link>
           {vendedor ? (
             <Link href="/marketplace/vender" className="bg-accent text-bg px-4 py-2 rounded-lg text-sm font-body font-semibold hover:bg-amber-400 transition-colors">
               + Publicar producto

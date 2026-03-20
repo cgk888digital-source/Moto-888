@@ -2,11 +2,15 @@ import { NextRequest, NextResponse } from 'next/server'
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import { createClient } from '@/lib/supabase/server'
 import { MANUAL_KNOWLEDGE } from '@/lib/knowledge'
+import type { MLRepuesto } from '@/features/chat/types'
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY ?? '')
 
+// Placeholder: reemplaza con tu ID de afiliado de MercadoLibre cuando lo tengas
+const ML_AFFILIATE_ID = process.env.ML_AFFILIATE_ID ?? ''
+
 function buildSystemPrompt(motoCtx: string, historialCtx: string): string {
-  return `Eres MotoSafe AI, un mecánico experto en motocicletas con 20 años de experiencia.
+  return `Eres MotoVerse AI, un mecánico experto en motocicletas con 20 años de experiencia.
 Estás hablando con el dueño de esta moto: ${motoCtx}
 
 ${historialCtx}
@@ -22,7 +26,7 @@ REGLAS:
 - Cuando tengas suficiente información para un diagnóstico, termina tu respuesta con un bloque JSON así:
 
 \`\`\`json
-{"nivel_urgencia":"bajo|medio|alto|critico","resumen":"una frase corta del diagnóstico"}
+{"nivel_urgencia":"bajo|medio|alto|critico","resumen":"una frase corta del diagnóstico","repuestos":["repuesto1 modelo","repuesto2 modelo"]}
 \`\`\`
 
 Niveles de urgencia:
@@ -31,7 +35,38 @@ Niveles de urgencia:
 - alto: no usar la moto hasta revisar
 - critico: peligro inmediato, detener la moto ya
 
+En "repuestos" incluye los nombres específicos de piezas necesarias, incluyendo el modelo de la moto (ej: "kit válvulas Bera SBR 150", "filtro aceite Yamaha YBR 125").
+Máximo 3 repuestos. Si no se necesitan repuestos, usa [].
+
 Si aún no tienes suficiente información, NO incluyas el bloque JSON — solo pregunta.`
+}
+
+async function buscarEnML(repuesto: string): Promise<MLRepuesto[]> {
+  try {
+    const query = encodeURIComponent(repuesto)
+    const res = await fetch(
+      `https://api.mercadolibre.com/sites/MLV/search?q=${query}&limit=5`,
+      { next: { revalidate: 3600 } } // cache 1 hora
+    )
+    if (!res.ok) return []
+    const data = await res.json()
+
+    return (data.results ?? []).slice(0, 5).map((item: any) => {
+      const url = ML_AFFILIATE_ID
+        ? `${item.permalink}?referrer=${ML_AFFILIATE_ID}`
+        : item.permalink
+      return {
+        titulo: item.title,
+        precio: item.price,
+        moneda: item.currency_id,
+        condicion: item.condition === 'new' ? 'Nuevo' : 'Usado',
+        vendedor_rating: item.seller?.seller_reputation?.transactions?.ratings?.positive ?? null,
+        url,
+      } as MLRepuesto
+    })
+  } catch {
+    return []
+  }
 }
 
 export async function POST(req: NextRequest) {
@@ -57,11 +92,8 @@ export async function POST(req: NextRequest) {
     }
 
     if (!moto_id || !messages?.length) {
-      console.log('DEBUG: Faltan campos:', { moto_id, messagesCount: messages?.length })
       return NextResponse.json({ error: 'Faltan campos requeridos' }, { status: 400 })
     }
-
-    console.log('DEBUG: Moto ID:', moto_id)
 
     // Contexto de la moto
     const { data: moto } = await supabase
@@ -95,7 +127,7 @@ export async function POST(req: NextRequest) {
       parts: [{ text: m.content }],
     }))
 
-    const lastMessage = history.pop() // El último mensaje se envía por separado
+    const lastMessage = history.pop()
 
     const model = genAI.getGenerativeModel({
       model: 'gemini-flash-latest',
@@ -108,11 +140,24 @@ export async function POST(req: NextRequest) {
 
     // Detectar si hay diagnóstico embebido
     const jsonMatch = responseText.match(/```json\s*(\{[\s\S]*?\})\s*```/)
-    let diagnostico: { nivel_urgencia: string; resumen: string } | null = null
+    let diagnostico: { nivel_urgencia: string; resumen: string; repuestos?: string[] } | null = null
+    let ml_resultados: Record<string, MLRepuesto[]> | null = null
 
     if (jsonMatch) {
       try {
         diagnostico = JSON.parse(jsonMatch[1])
+
+        // Buscar repuestos en MercadoLibre en paralelo
+        const repuestos = diagnostico?.repuestos ?? []
+        if (repuestos.length > 0) {
+          const searches = repuestos.slice(0, 3).map(r => buscarEnML(r))
+          const resultados = await Promise.all(searches)
+          ml_resultados = {}
+          repuestos.slice(0, 3).forEach((r, i) => {
+            if (resultados[i].length > 0) ml_resultados![r] = resultados[i]
+          })
+          if (Object.keys(ml_resultados).length === 0) ml_resultados = null
+        }
       } catch {
         // ignorar parse errors
       }
@@ -123,7 +168,8 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({
       reply: cleanText,
-      diagnostico, // null si no hay diagnóstico aún
+      diagnostico,
+      ml_resultados,
     })
   } catch (err: any) {
     console.error('Error en chat AI:', err)

@@ -1,6 +1,6 @@
 'use client'
 
-import { useState, useTransition } from 'react'
+import { useState, useTransition, useRef } from 'react'
 import { createMoto, updateUserNombre } from '../actions'
 import { MotoFormData, TipoAceite, KitTipo, MARCAS_MOTO } from '../types'
 
@@ -31,6 +31,9 @@ export function MotoRegistrationWizard({ initialNombre }: { initialNombre?: stri
   })
   const [error, setError] = useState<string | null>(null)
   const [isPending, startTransition] = useTransition()
+  const [ocrLoading, setOcrLoading] = useState(false)
+  const [ocrSuccess, setOcrSuccess] = useState(false)
+  const ocrInputRef = useRef<HTMLInputElement>(null)
 
   function nextStep() { setStep(s => s + 1) }
   function prevStep() { setStep(s => s - 1) }
@@ -48,6 +51,36 @@ export function MotoRegistrationWizard({ initialNombre }: { initialNombre?: stri
     e.preventDefault()
     if (!motoData.marca || !motoData.modelo) return
     nextStep()
+  }
+
+  async function handleOCR(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setOcrLoading(true)
+    setError(null)
+    try {
+      const fd = new FormData()
+      fd.append('imagen', file)
+      const res = await fetch('/api/ocr-titulo', { method: 'POST', body: fd })
+      const data = await res.json()
+      if (!res.ok) {
+        setError(data.error ?? 'No se pudo leer el título')
+        return
+      }
+      const d = data.datos
+      setMotoData(prev => ({
+        ...prev,
+        marca: d.marca ?? prev.marca,
+        modelo: d.modelo ?? prev.modelo,
+        ano: d.ano ?? prev.ano,
+      }))
+      setOcrSuccess(true)
+    } catch {
+      setError('Error al procesar la imagen')
+    } finally {
+      setOcrLoading(false)
+      if (ocrInputRef.current) ocrInputRef.current.value = ''
+    }
   }
 
   function handleFinal(e: React.FormEvent) {
@@ -127,9 +160,46 @@ export function MotoRegistrationWizard({ initialNombre }: { initialNombre?: stri
             <h2 className="font-display text-2xl font-semibold text-text-base uppercase tracking-wide mb-1">
               Cuéntame tu moto
             </h2>
-            <p className="text-text-muted text-sm font-body mb-8">
+            <p className="text-text-muted text-sm font-body mb-5">
               Registramos los datos para hacerle seguimiento
             </p>
+
+            {/* OCR del título */}
+            <div className="mb-6 p-4 rounded-xl border border-dashed border-accent/40 bg-accent/5">
+              <p className="text-xs font-display font-bold uppercase tracking-wider text-accent mb-1">
+                📷 Escanear título de propiedad
+              </p>
+              <p className="text-xs text-text-muted font-body mb-3">
+                Toma una foto del documento y llenamos los datos automáticamente con IA
+              </p>
+              <input
+                ref={ocrInputRef}
+                type="file"
+                accept="image/*"
+                capture="environment"
+                className="hidden"
+                onChange={handleOCR}
+              />
+              <button
+                type="button"
+                disabled={ocrLoading}
+                onClick={() => ocrInputRef.current?.click()}
+                className="w-full py-2 rounded-lg bg-accent text-bg text-sm font-body font-semibold hover:bg-amber-400 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+              >
+                {ocrLoading ? (
+                  <><span className="w-4 h-4 border-2 border-bg/40 border-t-bg rounded-full animate-spin" /> Analizando...</>
+                ) : ocrSuccess ? (
+                  <>✓ Datos extraídos — puedes corregirlos abajo</>
+                ) : (
+                  <>📸 Tomar foto del título</>
+                )}
+              </button>
+              {ocrSuccess && (
+                <p className="text-xs text-green-400 font-body mt-2 text-center">
+                  ✓ Marca, modelo y año rellenados automáticamente
+                </p>
+              )}
+            </div>
 
             <div className="space-y-5">
               {/* Marca */}

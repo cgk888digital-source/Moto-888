@@ -9,8 +9,8 @@ const NAV = [
   { href: '/feed',         label: 'Feed',     icon: '📡' },
   { href: '/marketplace',  label: 'Market',   icon: '🛒' },
   { href: '/grupos',       label: 'Grupos',   icon: '👥' },
-  { href: '/eventos',      label: 'Eventos',  icon: '🗺️' },
-  { href: '/mapa',         label: 'Mapa',     icon: '📍' },
+  { href: '/eventos',      label: 'Eventos',  icon: '📅' },
+  { href: '/rutas',        label: 'Rutas',    icon: '🗺️' },
   { href: '/roadguardian', label: 'Guard',    icon: '🛡️' },
 ]
 

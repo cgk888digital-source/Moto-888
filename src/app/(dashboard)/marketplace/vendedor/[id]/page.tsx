@@ -1,7 +1,7 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
-import { getVendedor, getMisProductos } from '@/features/marketplace/queries'
+import { getVendedor, getMisProductos, getResenasByVendedor } from '@/features/marketplace/queries'
 import { ProductoCard } from '@/features/marketplace/components/ProductoCard'
 
 export default async function VendedorPage({ params }: { params: Promise<{ id: string }> }) {
@@ -10,9 +10,10 @@ export default async function VendedorPage({ params }: { params: Promise<{ id: s
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  const [vendedor, productos] = await Promise.all([
+  const [vendedor, productos, resenas] = await Promise.all([
     getVendedor(id),
     getMisProductos(id),
+    getResenasByVendedor(id),
   ])
 
   if (!vendedor) notFound()
@@ -110,6 +111,30 @@ export default async function VendedorPage({ params }: { params: Promise<{ id: s
           </div>
         )}
       </div>
+
+      {/* Reseñas */}
+      {resenas.length > 0 && (
+        <div className="bg-surface border border-border rounded-xl p-5 space-y-4">
+          <h2 className="font-display font-bold text-lg text-text-base tracking-wide">
+            Reseñas ({resenas.length})
+          </h2>
+          <div className="space-y-3">
+            {resenas.map((r: any) => (
+              <div key={r.id} className="bg-bg border border-border rounded-lg p-4">
+                <div className="flex items-center gap-2 mb-1">
+                  <span className="text-accent text-sm">{'★'.repeat(r.rating)}{'☆'.repeat(5 - r.rating)}</span>
+                  <span className="text-xs text-text-muted font-body">
+                    {r.created_at ? new Date(r.created_at).toLocaleDateString('es-VE') : ''}
+                  </span>
+                </div>
+                {r.comentario && (
+                  <p className="text-sm text-text-muted font-body">{r.comentario}</p>
+                )}
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
 
       <Link
         href="/marketplace"

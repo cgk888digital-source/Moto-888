@@ -72,6 +72,59 @@ export async function toggleGuardado(productoId: string, guardado: boolean) {
   revalidatePath(`/marketplace/producto/${productoId}`)
 }
 
+export async function createResena(transaccionId: string, vendedorId: string, rating: number, comentario: string) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: 'No autenticado' }
+  if (rating < 1 || rating > 5) return { error: 'Rating inválido' }
+
+  // Verificar que el usuario es el comprador de esta transacción
+  const { data: tx } = await supabase
+    .from('marketplace_transacciones')
+    .select('id, vendedor_id')
+    .eq('id', transaccionId)
+    .eq('comprador_id', user.id)
+    .single()
+
+  if (!tx) return { error: 'Transacción no encontrada' }
+
+  // Verificar que no haya reseña previa para esta transacción
+  const { data: existing } = await supabase
+    .from('marketplace_resenas')
+    .select('id')
+    .eq('transaccion_id', transaccionId)
+    .maybeSingle()
+
+  if (existing) return { error: 'Ya dejaste una reseña para esta compra' }
+
+  const { error } = await supabase.from('marketplace_resenas').insert({
+    vendedor_id: vendedorId,
+    comprador_id: user.id,
+    transaccion_id: transaccionId,
+    rating,
+    comentario: comentario.trim() || null,
+  })
+
+  if (error) return { error: error.message }
+
+  // Actualizar rating_promedio del vendedor
+  const { data: resenas } = await supabase
+    .from('marketplace_resenas')
+    .select('rating')
+    .eq('vendedor_id', vendedorId)
+
+  if (resenas && resenas.length > 0) {
+    const avg = resenas.reduce((a, r) => a + r.rating, 0) / resenas.length
+    await supabase
+      .from('marketplace_vendedores')
+      .update({ rating_promedio: Math.round(avg * 10) / 10 })
+      .eq('id', vendedorId)
+  }
+
+  revalidatePath('/marketplace/mis-compras')
+  return { success: true }
+}
+
 export async function sendMensaje(productoId: string, destinatarioId: string, contenido: string) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()

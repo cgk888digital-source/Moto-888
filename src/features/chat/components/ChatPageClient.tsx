@@ -6,6 +6,7 @@ import { ChatBubble } from './ChatBubble'
 import { ChatInput } from './ChatInput'
 import { NivelUrgencia, URGENCIA_CONFIG } from '@/features/diagnosticos/types'
 import { createClient } from '@/lib/supabase/client'
+import type { MLRepuesto } from '../types'
 
 interface Props {
   moto_id: string
@@ -15,7 +16,7 @@ interface Props {
 const WELCOME: ChatMessage = {
   id: 'welcome',
   role: 'assistant',
-  content: '¡Hola! Soy MotoSafe AI. Contame qué problema o síntoma notaste en tu moto. Cuanto más detallado, mejor diagnóstico puedo darte.',
+  content: '¡Hola! Soy MotoVerse AI. Contame qué problema o síntoma notaste en tu moto. Cuanto más detallado, mejor diagnóstico puedo darte.',
   timestamp: new Date(),
 }
 
@@ -23,6 +24,7 @@ export function ChatPageClient({ moto_id, motoNombre }: Props) {
   const [messages, setMessages] = useState<ChatMessage[]>([WELCOME])
   const [loading, setLoading] = useState(false)
   const [pendingDiag, setPendingDiag] = useState<{ nivel_urgencia: NivelUrgencia; resumen: string; sintoma: string } | null>(null)
+  const [mlResultados, setMlResultados] = useState<Record<string, MLRepuesto[]> | null>(null)
   const [saved, setSaved] = useState(false)
   const bottomRef = useRef<HTMLDivElement>(null)
 
@@ -78,12 +80,12 @@ export function ChatPageClient({ moto_id, motoNombre }: Props) {
 
       // Si hay diagnóstico, guardarlo como pendiente para que el usuario confirme
       if (data.diagnostico) {
-        // Tomar el primer mensaje del usuario como síntoma original
         const primerMensajeUsuario = [...messages, userMsg].find(m => m.role === 'user')
         setPendingDiag({
           ...data.diagnostico,
           sintoma: primerMensajeUsuario?.content ?? text,
         })
+        if (data.ml_resultados) setMlResultados(data.ml_resultados)
       }
     } catch {
       setMessages(prev => [...prev, {
@@ -120,6 +122,7 @@ export function ChatPageClient({ moto_id, motoNombre }: Props) {
 
     setSaved(true)
     setPendingDiag(null)
+    setMlResultados(null)
   }
 
   return (
@@ -134,6 +137,7 @@ export function ChatPageClient({ moto_id, motoNombre }: Props) {
           onClick={() => {
             setMessages([WELCOME])
             setPendingDiag(null)
+            setMlResultados(null)
             setSaved(false)
           }}
           className="text-xs text-text-muted hover:text-accent font-body transition-colors"
@@ -160,13 +164,53 @@ export function ChatPageClient({ moto_id, motoNombre }: Props) {
           </div>
         )}
 
-        {/* Banner guardar diagnóstico */}
+        {/* Banner diagnóstico + MercadoLibre */}
         {pendingDiag && !saved && (
-          <div className={`rounded-xl border p-4 space-y-3 ${URGENCIA_CONFIG[pendingDiag.nivel_urgencia].bg}`}>
+          <div className={`rounded-xl border p-4 space-y-4 ${URGENCIA_CONFIG[pendingDiag.nivel_urgencia].bg}`}>
             <p className={`text-xs font-display font-bold uppercase tracking-wider ${URGENCIA_CONFIG[pendingDiag.nivel_urgencia].color}`}>
               {URGENCIA_CONFIG[pendingDiag.nivel_urgencia].icon} Diagnóstico listo — urgencia {URGENCIA_CONFIG[pendingDiag.nivel_urgencia].label}
             </p>
             <p className="text-xs text-text-muted font-body">{pendingDiag.resumen}</p>
+
+            {/* Repuestos en MercadoLibre Venezuela */}
+            {mlResultados && Object.keys(mlResultados).length > 0 && (
+              <div className="space-y-3">
+                <p className="text-xs font-display font-bold uppercase tracking-wider text-accent">
+                  🔧 Repuestos en MercadoLibre Venezuela
+                </p>
+                {Object.entries(mlResultados).map(([repuesto, items]) => (
+                  <div key={repuesto} className="space-y-1.5">
+                    <p className="text-xs text-text-muted font-body uppercase tracking-wide">{repuesto}</p>
+                    {items.slice(0, 3).map((item, i) => (
+                      <a
+                        key={i}
+                        href={item.url}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center justify-between bg-bg border border-border rounded-lg px-3 py-2 hover:border-accent transition-colors group"
+                      >
+                        <div className="flex-1 min-w-0 mr-2">
+                          <p className="text-xs text-text-base font-body truncate group-hover:text-accent transition-colors">
+                            {item.titulo}
+                          </p>
+                          <p className="text-xs text-text-muted font-body">{item.condicion}</p>
+                        </div>
+                        <div className="text-right shrink-0">
+                          <p className="text-sm font-display font-bold text-accent">
+                            {item.moneda === 'USD' ? '$' : item.moneda} {item.precio.toFixed(2)}
+                          </p>
+                          <p className="text-xs text-text-muted font-body">Ver →</p>
+                        </div>
+                      </a>
+                    ))}
+                  </div>
+                ))}
+                <p className="text-xs text-text-muted font-body italic">
+                  💡 Llega al taller sabiendo exactamente cuánto cuestan los repuestos
+                </p>
+              </div>
+            )}
+
             <button
               onClick={handleGuardarDiagnostico}
               className="btn-primary w-full text-center text-xs py-2"
