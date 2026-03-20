@@ -20,7 +20,7 @@ export function MotoCard({ moto }: { moto: Tables<'motos'> }) {
     <div className="bg-surface border border-border rounded-2xl overflow-hidden">
       {/* Header */}
       <div className="bg-surface-2 px-6 py-5 border-b border-border">
-        <div className="flex items-start justify-between">
+        <div className="flex items-start justify-between gap-3">
           <div>
             <h3 className="font-display text-2xl font-bold text-text-base uppercase tracking-wide">
               {moto.marca} {moto.modelo}
@@ -29,12 +29,21 @@ export function MotoCard({ moto }: { moto: Tables<'motos'> }) {
               {moto.ano} · {moto.km_actuales.toLocaleString('es-ES')} km
             </p>
           </div>
-          <div className={`px-3 py-1 rounded-full text-xs font-display uppercase tracking-wide ${
-            moto.nfc_activado
-              ? 'bg-green-950/50 text-green-400 border border-green-800/40'
-              : 'bg-surface border border-border text-text-muted'
-          }`}>
-            {moto.nfc_activado ? 'NFC activo' : 'Sin NFC'}
+          <div className="flex items-center gap-2 shrink-0">
+            <Link
+              href={`/moto/${moto.id}/editar`}
+              className="w-8 h-8 rounded-lg bg-surface border border-border flex items-center justify-center text-sm text-text-muted hover:text-accent hover:border-accent transition-colors"
+              title="Editar datos de la moto"
+            >
+              ✏️
+            </Link>
+            <div className={`px-3 py-1 rounded-full text-xs font-display uppercase tracking-wide ${
+              moto.nfc_activado
+                ? 'bg-green-950/50 text-green-400 border border-green-800/40'
+                : 'bg-surface border border-border text-text-muted'
+            }`}>
+              {moto.nfc_activado ? 'NFC activo' : 'Sin NFC'}
+            </div>
           </div>
         </div>
       </div>
