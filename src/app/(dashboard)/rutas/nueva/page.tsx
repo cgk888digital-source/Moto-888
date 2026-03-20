@@ -17,7 +17,7 @@ export default async function NuevaRutaPage() {
         <h1 className="font-display text-3xl font-bold text-text-base uppercase tracking-wide">Nueva ruta</h1>
       </div>
 
-      <form action={createRuta} className="bg-surface border border-border rounded-2xl p-6 space-y-5">
+      <form action={createRuta as unknown as (fd: FormData) => Promise<void>} className="bg-surface border border-border rounded-2xl p-6 space-y-5">
         <div>
           <label className="label-field">Título de la ruta *</label>
           <input name="titulo" required className="input-base" placeholder="ej. Ruta de las colinas del Ávila" />
