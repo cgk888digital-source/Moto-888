@@ -2,6 +2,14 @@
 import { useState, useTransition } from 'react'
 import type { Post } from '../types'
 import { toggleLike, addComentario } from '../actions'
+import { createClient } from '@/lib/supabase/client'
+
+interface Comentario {
+  id: string
+  contenido: string
+  created_at: string | null
+  autor: { nombre: string | null } | null
+}
 
 const TIPO_BADGE: Record<string, string> = {
   general:    '',
@@ -25,6 +33,9 @@ export function PostCard({ post }: { post: Post }) {
   const [liked, setLiked] = useState(post.liked_by_me)
   const [likes, setLikes] = useState(post.likes_count)
   const [showComments, setShowComments] = useState(false)
+  const [comentarios, setComentarios] = useState<Comentario[]>([])
+  const [loadingComentarios, setLoadingComentarios] = useState(false)
+  const [comentariosCount, setComentariosCount] = useState(post.comentarios_count)
   const [comentario, setComentario] = useState('')
   const [pending, startTransition] = useTransition()
 
@@ -34,11 +45,38 @@ export function PostCard({ post }: { post: Post }) {
     startTransition(() => toggleLike(post.id, liked))
   }
 
+  async function handleToggleComments() {
+    if (showComments) {
+      setShowComments(false)
+      return
+    }
+    setShowComments(true)
+    if (comentarios.length > 0) return // ya cargados
+    setLoadingComentarios(true)
+    const supabase = createClient()
+    const { data } = await supabase
+      .from('post_comentarios')
+      .select('id, contenido, created_at, autor:users!post_comentarios_user_id_fkey(nombre)')
+      .eq('post_id', post.id)
+      .order('created_at', { ascending: true })
+    setComentarios((data ?? []) as unknown as Comentario[])
+    setLoadingComentarios(false)
+  }
+
   function handleComment(e: React.FormEvent) {
     e.preventDefault()
     if (!comentario.trim()) return
+    const texto = comentario.trim()
     startTransition(async () => {
-      await addComentario(post.id, comentario)
+      await addComentario(post.id, texto)
+      // Agregar optimisticamente
+      setComentarios(prev => [...prev, {
+        id: crypto.randomUUID(),
+        contenido: texto,
+        created_at: new Date().toISOString(),
+        autor: null,
+      }])
+      setComentariosCount(n => (n ?? 0) + 1)
       setComentario('')
     })
   }
@@ -91,17 +129,41 @@ export function PostCard({ post }: { post: Post }) {
           <span>{likes}</span>
         </button>
         <button
-          onClick={() => setShowComments(s => !s)}
+          onClick={handleToggleComments}
           className="flex items-center gap-1.5 text-sm text-text-muted hover:text-accent font-body transition-colors"
         >
           <span>💬</span>
-          <span>{post.comentarios_count}</span>
+          <span>{comentariosCount}</span>
         </button>
       </div>
 
       {/* Comentarios */}
       {showComments && (
-        <div className="space-y-2 pt-1">
+        <div className="space-y-3 pt-1 border-t border-border">
+          {/* Lista de comentarios */}
+          {loadingComentarios ? (
+            <p className="text-xs text-text-muted font-body">Cargando comentarios...</p>
+          ) : comentarios.length > 0 ? (
+            <div className="space-y-2">
+              {comentarios.map(c => (
+                <div key={c.id} className="flex gap-2">
+                  <div className="w-7 h-7 rounded-full bg-accent/20 flex items-center justify-center text-accent font-bold text-xs shrink-0 font-display">
+                    {(c.autor?.nombre ?? '?')[0].toUpperCase()}
+                  </div>
+                  <div className="flex-1 bg-bg border border-border rounded-lg px-3 py-2">
+                    <p className="text-xs font-semibold text-text-muted font-body mb-0.5">
+                      {c.autor?.nombre ?? 'Usuario'}
+                    </p>
+                    <p className="text-sm text-text-base font-body">{c.contenido}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          ) : (
+            <p className="text-xs text-text-muted font-body">Sin comentarios aún. ¡Sé el primero!</p>
+          )}
+
+          {/* Formulario nuevo comentario */}
           <form onSubmit={handleComment} className="flex gap-2">
             <input
               value={comentario}
@@ -111,7 +173,7 @@ export function PostCard({ post }: { post: Post }) {
             />
             <button
               type="submit"
-              disabled={pending}
+              disabled={pending || !comentario.trim()}
               className="text-xs bg-accent text-bg px-3 py-1.5 rounded-lg font-body font-semibold hover:bg-amber-400 transition-colors disabled:opacity-50"
             >
               Enviar
