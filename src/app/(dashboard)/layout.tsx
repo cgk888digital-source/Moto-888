@@ -3,6 +3,7 @@ import { redirect } from 'next/navigation'
 import { signOut } from '@/features/auth/actions'
 import { getProfile } from '@/features/motos/queries'
 import Link from 'next/link'
+import Image from 'next/image'
 
 const NAV = [
   { href: '/dashboard',    label: 'Mi Moto',  icon: '🏍️' },
@@ -26,9 +27,8 @@ export default async function DashboardLayout({ children }: { children: React.Re
       {/* Top header */}
       <header className="border-b border-border bg-surface sticky top-0 z-20">
         <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
-          <Link href="/dashboard" className="font-display text-xl font-bold tracking-widest text-accent uppercase">
-            Biker<span className="text-text-base">Brain</span>
-            <span className="text-xs text-text-muted font-body normal-case tracking-normal ml-1">888</span>
+          <Link href="/dashboard">
+            <Image src="/logo.png" alt="Bikevzla 888" width={120} height={96} className="h-9 w-auto object-contain" priority />
           </Link>
 
           <div className="flex items-center gap-4">

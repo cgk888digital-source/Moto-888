@@ -1,14 +1,11 @@
+import Image from 'next/image'
+
 export default function AuthLayout({ children }: { children: React.ReactNode }) {
   return (
     <div className="min-h-screen bg-bg flex flex-col items-center justify-center px-4">
       {/* Logo */}
       <div className="mb-10 text-center">
-        <span className="font-display text-3xl font-bold tracking-widest text-accent uppercase">
-          Moto<span className="text-text-base">Safe</span>
-        </span>
-        <p className="text-text-muted text-xs mt-1 tracking-wider uppercase font-body">
-          Tu moto, protegida
-        </p>
+        <Image src="/logo.png" alt="Bikevzla 888" width={200} height={160} className="h-20 w-auto object-contain mx-auto" priority />
       </div>
 
       <div className="w-full max-w-sm">{children}</div>
