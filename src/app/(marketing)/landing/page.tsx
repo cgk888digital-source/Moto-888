@@ -89,7 +89,7 @@ export default function LandingPage() {
       {/* Nav */}
       <header className="border-b border-border bg-surface sticky top-0 z-10">
         <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
-          <Image src="/logo.png" alt="Bikevzla 888" width={120} height={96} className="h-9 w-auto object-contain" priority />
+          <Image src="/logo.png" alt="Bikevzla 888" width={160} height={117} className="h-11 w-auto object-contain" priority />
           <div className="flex items-center gap-3">
             <Link href="/login" className="text-sm text-text-muted hover:text-text-base transition-colors hidden sm:block">
               Iniciar sesión
@@ -221,7 +221,7 @@ export default function LandingPage() {
       {/* Footer */}
       <footer className="border-t border-border py-6">
         <div className="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-text-muted">
-          <Image src="/logo.png" alt="Bikevzla 888" width={80} height={64} className="h-7 w-auto object-contain" />
+          <Image src="/logo.png" alt="Bikevzla 888" width={120} height={88} className="h-9 w-auto object-contain" />
           <span>© 2026 · Venezuela y Latinoamérica</span>
         </div>
       </footer>
