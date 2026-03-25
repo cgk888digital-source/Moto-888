@@ -88,8 +88,8 @@ export default function LandingPage() {
 
       {/* Nav */}
       <header className="border-b border-border bg-surface sticky top-0 z-10">
-        <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
-          <Image src="/logo.png" alt="Bikevzla 888" width={200} height={146} className="h-14 w-auto object-contain" priority />
+        <div className="max-w-5xl mx-auto px-4 h-24 flex items-center justify-between">
+          <Image src="/logo.png" alt="Bikevzla 888" width={280} height={205} className="h-20 w-auto object-contain" priority />
           <div className="flex items-center gap-3">
             <Link href="/login" className="text-sm text-text-muted hover:text-text-base transition-colors hidden sm:block">
               Iniciar sesión

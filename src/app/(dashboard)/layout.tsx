@@ -6,13 +6,14 @@ import Link from 'next/link'
 import Image from 'next/image'
 
 const NAV = [
-  { href: '/dashboard',    label: 'Mi Moto',  icon: '🏍️' },
-  { href: '/feed',         label: 'Feed',     icon: '📡' },
-  { href: '/marketplace',  label: 'Market',   icon: '🛒' },
-  { href: '/grupos',       label: 'Grupos',   icon: '👥' },
-  { href: '/eventos',      label: 'Eventos',  icon: '📅' },
-  { href: '/rutas',        label: 'Rutas',    icon: '🗺️' },
-  { href: '/roadguardian', label: 'Guard',    icon: '🛡️' },
+  { href: '/dashboard',            label: 'Mi Moto',  icon: '🏍️' },
+  { href: '/feed',                 label: 'Feed',     icon: '📡' },
+  { href: '/marketplace',          label: 'Market',   icon: '🛒' },
+  { href: '/marketplace/mensajes', label: 'Chats',    icon: '💬' },
+  { href: '/grupos',               label: 'Grupos',   icon: '👥' },
+  { href: '/eventos',              label: 'Eventos',  icon: '📅' },
+  { href: '/rutas',                label: 'Rutas',    icon: '🗺️' },
+  { href: '/roadguardian',         label: 'Guard',    icon: '🛡️' },
 ]
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -26,9 +27,9 @@ export default async function DashboardLayout({ children }: { children: React.Re
     <div className="min-h-dvh bg-bg">
       {/* Top header */}
       <header className="border-b border-border bg-surface sticky top-0 z-20">
-        <div className="max-w-5xl mx-auto px-4 h-16 flex items-center justify-between">
+        <div className="max-w-5xl mx-auto px-4 h-24 flex items-center justify-between">
           <Link href="/dashboard">
-            <Image src="/logo.png" alt="Bikevzla 888" width={200} height={146} className="h-14 w-auto object-contain" priority />
+            <Image src="/logo.png" alt="Bikevzla 888" width={280} height={205} className="h-20 w-auto object-contain" priority />
           </Link>
 
           <div className="flex items-center gap-4">

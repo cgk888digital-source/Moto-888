@@ -2,12 +2,10 @@ import { NextRequest, NextResponse } from 'next/server'
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import { createClient } from '@/lib/supabase/server'
 import { MANUAL_KNOWLEDGE } from '@/lib/knowledge'
+import { getMLToken } from '@/lib/ml-token'
 import type { MLRepuesto } from '@/features/chat/types'
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY ?? '')
-
-// Placeholder: reemplaza con tu ID de afiliado de MercadoLibre cuando lo tengas
-const ML_AFFILIATE_ID = process.env.ML_AFFILIATE_ID ?? ''
 
 function buildSystemPrompt(motoCtx: string, historialCtx: string): string {
   return `Eres Bikevzla 888 AI, un mecánico experto en motocicletas con 20 años de experiencia.
@@ -44,17 +42,16 @@ Si aún no tienes suficiente información, NO incluyas el bloque JSON — solo p
 async function buscarEnML(repuesto: string): Promise<MLRepuesto[]> {
   try {
     const query = encodeURIComponent(repuesto)
-    const url = `https://api.mercadolibre.com/sites/MLV/search?q=${query}&limit=5`
-    
-    // Añadimos headers comunes para evitar bloqueos 403
-    const res = await fetch(url, {
+    const searchUrl = `https://api.mercadolibre.com/sites/MLV/search?q=${query}&limit=5`
+
+    const token = await getMLToken()
+    const headers: Record<string, string> = { 'Accept': 'application/json' }
+    if (token) headers['Authorization'] = `Bearer ${token}`
+
+    const res = await fetch(searchUrl, {
       method: 'GET',
-      headers: {
-        'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
-        'Accept': 'application/json',
-        'Accept-Language': 'es-VE,es;q=0.9',
-      },
-      next: { revalidate: 3600 } // cache 1 hora
+      headers,
+      next: { revalidate: 3600 },
     })
 
     if (!res.ok) {
@@ -66,25 +63,19 @@ async function buscarEnML(repuesto: string): Promise<MLRepuesto[]> {
     const data = await res.json()
     const results = data.results ?? []
 
-    // Si no hay resultados y la búsqueda era muy específica, probamos con algo más simple
     if (results.length === 0 && repuesto.split(' ').length > 2) {
       const simplified = repuesto.split(' ').slice(0, 2).join(' ')
       return buscarEnML(simplified)
     }
 
-    return results.slice(0, 5).map((item: any) => {
-      const url = ML_AFFILIATE_ID
-        ? `${item.permalink}?referrer=${ML_AFFILIATE_ID}`
-        : item.permalink
-      return {
-        titulo: item.title,
-        precio: item.price,
-        moneda: item.currency_id,
-        condicion: item.condition === 'new' ? 'Nuevo' : 'Usado',
-        vendedor_rating: item.seller?.seller_reputation?.transactions?.ratings?.positive ?? null,
-        url,
-      } as MLRepuesto
-    })
+    return results.slice(0, 5).map((item: any) => ({
+      titulo: item.title,
+      precio: item.price,
+      moneda: item.currency_id,
+      condicion: item.condition === 'new' ? 'Nuevo' : 'Usado',
+      vendedor_rating: item.seller?.seller_reputation?.transactions?.ratings?.positive ?? null,
+      url: item.permalink,
+    } as MLRepuesto))
   } catch (err) {
     console.error(`[Search MLV Exception] para "${repuesto}":`, err)
     return []

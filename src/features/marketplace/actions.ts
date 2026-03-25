@@ -139,5 +139,22 @@ export async function sendMensaje(productoId: string, destinatarioId: string, co
 
   if (error) return { error: error.message }
   revalidatePath(`/marketplace/producto/${productoId}`)
+  revalidatePath('/marketplace/mensajes')
   return { success: true }
+}
+
+export async function markLeido(productoId: string, remitenteId: string) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return
+
+  await supabase
+    .from('marketplace_mensajes')
+    .update({ leido: true })
+    .eq('producto_id', productoId)
+    .eq('remitente_id', remitenteId)
+    .eq('destinatario_id', user.id)
+    .eq('leido', false)
+
+  revalidatePath('/marketplace/mensajes')
 }

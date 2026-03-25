@@ -1,4 +1,4 @@
-const CACHE_NAME = 'motoverse-v1'
+const CACHE_NAME = 'bikevzla-v2'
 const OFFLINE_URL = '/offline'
 
 // Assets a cachear inmediatamente (cache-first)
@@ -70,7 +70,7 @@ self.addEventListener('push', event => {
   if (!event.data) return
   const data = event.data.json()
   event.waitUntil(
-    self.registration.showNotification(data.title ?? 'MotoVerse', {
+    self.registration.showNotification(data.title ?? 'Bikevzla 888', {
       body: data.body ?? '',
       icon: '/icon-192.png',
       badge: '/icon-192.png',

@@ -105,7 +105,7 @@ export default async function VendedorPage({ params }: { params: Promise<{ id: s
               .map(p => (
                 <ProductoCard
                   key={p.id}
-                  producto={{ ...p, vendedor: { nombre_tienda: vendedor.nombre_tienda, tipo: vendedor.tipo, verificado: vendedor.verificado, ubicacion: vendedor.ubicacion, rating_promedio: vendedor.rating_promedio } }}
+                  producto={{ ...p, vendedor: { nombre_tienda: vendedor.nombre_tienda, tipo: vendedor.tipo, verificado: vendedor.verificado, ubicacion: vendedor.ubicacion, rating_promedio: vendedor.rating_promedio, user_id: vendedor.user_id } }}
                 />
               ))}
           </div>

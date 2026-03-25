@@ -29,7 +29,7 @@ export interface Producto {
   estado: 'activo' | 'vendido' | 'pausado'
   vistas: number
   created_at: string
-  vendedor?: Pick<Vendedor, 'nombre_tienda' | 'tipo' | 'verificado' | 'ubicacion' | 'rating_promedio'>
+  vendedor?: Pick<Vendedor, 'nombre_tienda' | 'tipo' | 'verificado' | 'ubicacion' | 'rating_promedio' | 'user_id'>
 }
 
 export const CATEGORIAS: Categoria[] = ['Motor','Frenos','Suspension','Electrico','Accesorios','Equipamiento','Motos','Otro']

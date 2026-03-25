@@ -121,3 +121,54 @@ export async function getMensajes(productoId: string, userId: string) {
     .order('created_at', { ascending: true })
   return data ?? []
 }
+
+export async function getMensajesThread(productoId: string, userId: string, otroUserId: string) {
+  const supabase = await createClient()
+  const { data } = await supabase
+    .from('marketplace_mensajes')
+    .select('id, contenido, remitente_id, destinatario_id, leido, created_at')
+    .eq('producto_id', productoId)
+    .or(
+      `and(remitente_id.eq.${userId},destinatario_id.eq.${otroUserId}),and(remitente_id.eq.${otroUserId},destinatario_id.eq.${userId})`
+    )
+    .order('created_at', { ascending: true })
+  return data ?? []
+}
+
+export async function getMisConversaciones(userId: string) {
+  const supabase = await createClient()
+  const { data } = await supabase
+    .from('marketplace_mensajes')
+    .select(`
+      id, contenido, remitente_id, destinatario_id, leido, created_at, producto_id,
+      producto:marketplace_productos!marketplace_mensajes_producto_id_fkey(id, titulo, fotos)
+    `)
+    .or(`remitente_id.eq.${userId},destinatario_id.eq.${userId}`)
+    .order('created_at', { ascending: false })
+
+  if (!data) return []
+
+  // Deduplicate by (producto_id, otro_user) — keep the latest message per conversation
+  const seen = new Set<string>()
+  const convs: any[] = []
+  for (const msg of data) {
+    const otroId = msg.remitente_id === userId ? msg.destinatario_id : msg.remitente_id
+    const key = `${msg.producto_id}:${otroId}`
+    if (!seen.has(key)) {
+      seen.add(key)
+      const prod = Array.isArray(msg.producto) ? msg.producto[0] : msg.producto
+      convs.push({ ...msg, otro_user_id: otroId, producto: prod })
+    }
+  }
+  return convs
+}
+
+export async function getUnreadCount(userId: string) {
+  const supabase = await createClient()
+  const { count } = await supabase
+    .from('marketplace_mensajes')
+    .select('id', { count: 'exact', head: true })
+    .eq('destinatario_id', userId)
+    .eq('leido', false)
+  return count ?? 0
+}

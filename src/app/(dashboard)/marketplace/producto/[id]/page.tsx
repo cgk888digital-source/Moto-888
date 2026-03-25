@@ -27,6 +27,7 @@ export default async function ProductoPage({ params }: { params: Promise<{ id: s
       producto={producto}
       mensajes={mensajes}
       userId={user.id}
+      vendedorUserId={producto.vendedor?.user_id ?? ''}
       isGuardado={!!guardado}
     />
   )

@@ -16,10 +16,11 @@ interface Props {
   producto: Producto
   mensajes: Mensaje[]
   userId: string
+  vendedorUserId: string
   isGuardado: boolean
 }
 
-export function ProductoDetailClient({ producto, mensajes: initMensajes, userId, isGuardado: initGuardado }: Props) {
+export function ProductoDetailClient({ producto, mensajes: initMensajes, userId, vendedorUserId, isGuardado: initGuardado }: Props) {
   const [guardado, setGuardado] = useState(initGuardado)
   const [mensajes, setMensajes] = useState(initMensajes)
   const [mensaje, setMensaje] = useState('')
@@ -30,9 +31,7 @@ export function ProductoDetailClient({ producto, mensajes: initMensajes, userId,
   const comision = COMISION_POR_PRECIO(producto.precio)
   const totalComprador = (producto.precio * (1 + comision)).toFixed(2)
   const fotos = producto.fotos ?? []
-
-  // vendedor user_id (need to get from vendedor)
-  const isOwnProduct = false // simplified — would check via vendedor.user_id
+  const isOwnProduct = vendedorUserId === userId
 
   function handleGuardado() {
     setGuardado(g => !g)
@@ -41,10 +40,9 @@ export function ProductoDetailClient({ producto, mensajes: initMensajes, userId,
 
   async function handleMensaje(e: React.FormEvent) {
     e.preventDefault()
-    if (!mensaje.trim() || !producto.vendedor_id) return
-    // destinatario = vendedor user_id (needed from join — simplified)
+    if (!mensaje.trim() || !vendedorUserId) return
     startTransition(async () => {
-      const res = await sendMensaje(producto.id, producto.vendedor_id, mensaje)
+      const res = await sendMensaje(producto.id, vendedorUserId, mensaje)
       if (!res?.error) {
         setMensajes(prev => [...prev, {
           id: Date.now().toString(),
@@ -160,7 +158,14 @@ export function ProductoDetailClient({ producto, mensajes: initMensajes, userId,
 
       {/* Chat con vendedor */}
       <div className="bg-surface border border-border rounded-xl p-5 space-y-4">
-        <h2 className="font-display font-bold text-text-base">Chat con el vendedor</h2>
+        <div className="flex items-center justify-between">
+          <h2 className="font-display font-bold text-text-base">Chat con el vendedor</h2>
+          {!isOwnProduct && vendedorUserId && (
+            <Link href={`/marketplace/mensajes/${producto.id}?con=${vendedorUserId}`} className="text-xs text-accent hover:underline font-body">
+              Ver conversación completa →
+            </Link>
+          )}
+        </div>
 
         <div ref={chatRef} className="space-y-2 max-h-60 overflow-y-auto">
           {mensajes.length === 0 ? (
