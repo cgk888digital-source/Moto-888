@@ -8,7 +8,7 @@ import { MANUAL_KNOWLEDGE } from '@/lib/knowledge'
 // 2. Reemplazar el bloque de llamada AI con la versión Anthropic
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY ?? '')
 
-const SYSTEM_PROMPT = `Eres MotoSafe AI, un mecánico experto en motocicletas con 20 años de experiencia.
+const SYSTEM_PROMPT = `Eres Bikevzla 888 AI, un mecánico experto en motocicletas con 20 años de experiencia.
 Responde SIEMPRE en español, de forma clara y directa para un motociclista común.
 
 ---

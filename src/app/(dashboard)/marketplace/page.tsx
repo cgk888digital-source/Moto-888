@@ -37,7 +37,7 @@ export default async function MarketplacePage({ searchParams }: Props) {
             </Link>
           ) : (
             <Link href="/marketplace/vender" className="border border-accent text-accent px-4 py-2 rounded-lg text-sm font-body font-semibold hover:bg-accent/10 transition-colors">
-              Vender en MotoVerse
+              Vender en Bikevzla 888
             </Link>
           )}
         </div>

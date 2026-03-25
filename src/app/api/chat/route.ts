@@ -10,7 +10,7 @@ const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY ?? '')
 const ML_AFFILIATE_ID = process.env.ML_AFFILIATE_ID ?? ''
 
 function buildSystemPrompt(motoCtx: string, historialCtx: string): string {
-  return `Eres MotoVerse AI, un mecánico experto en motocicletas con 20 años de experiencia.
+  return `Eres Bikevzla 888 AI, un mecánico experto en motocicletas con 20 años de experiencia.
 Estás hablando con el dueño de esta moto: ${motoCtx}
 
 ${historialCtx}

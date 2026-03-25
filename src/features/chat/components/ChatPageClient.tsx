@@ -16,7 +16,7 @@ interface Props {
 const WELCOME: ChatMessage = {
   id: 'welcome',
   role: 'assistant',
-  content: '¡Hola! Soy MotoVerse AI. Contame qué problema o síntoma notaste en tu moto. Cuanto más detallado, mejor diagnóstico puedo darte.',
+  content: '¡Hola! Soy Bikevzla 888 AI. Contame qué problema o síntoma notaste en tu moto. Cuanto más detallado, mejor diagnóstico puedo darte.',
   timestamp: new Date(),
 }
 
@@ -108,7 +108,7 @@ export function ChatPageClient({ moto_id, motoNombre }: Props) {
     // Construir respuesta completa del chat
     const resumenChat = messages
       .filter(m => m.id !== 'welcome')
-      .map(m => `${m.role === 'user' ? 'Usuario' : 'MotoSafe AI'}: ${m.content}`)
+      .map(m => `${m.role === 'user' ? 'Usuario' : 'Bikevzla 888 AI'}: ${m.content}`)
       .join('\n\n')
 
     await supabase.from('diagnosticos').insert({

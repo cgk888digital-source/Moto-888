@@ -89,7 +89,7 @@ export default function LandingPage() {
       <header className="border-b border-border bg-surface sticky top-0 z-10">
         <div className="max-w-5xl mx-auto px-4 h-14 flex items-center justify-between">
           <span className="font-display text-xl font-bold tracking-widest uppercase">
-            <span className="text-accent">BikerBrain</span>
+            <span className="text-accent">Bikevzla</span>
             <span className="text-text-base"> 888</span>
           </span>
           <div className="flex items-center gap-3">
@@ -114,7 +114,7 @@ export default function LandingPage() {
           <span className="text-accent">Cinco razones para quedarse.</span>
         </h1>
         <p className="text-text-muted text-base sm:text-lg max-w-2xl mx-auto mb-8 sm:mb-10 leading-relaxed px-2 sm:px-0">
-          Mantenimiento inteligente, diagnóstico IA, comunidad de riders, marketplace sin comisión y seguridad activa en carretera. Todo en BikerBrain 888.
+          Mantenimiento inteligente, diagnóstico IA, comunidad de riders, marketplace sin comisión y seguridad activa en carretera. Todo en Bikevzla 888.
         </p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center px-6 sm:px-0">
           <Link href="/register" className="btn-primary text-sm sm:text-base px-6 sm:px-8 py-3.5 sm:py-4 min-h-[52px] flex items-center justify-center">
@@ -224,7 +224,7 @@ export default function LandingPage() {
       <footer className="border-t border-border py-6">
         <div className="max-w-5xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-text-muted">
           <span className="font-display uppercase tracking-widest">
-            <span className="text-accent">BikerBrain</span> 888
+            <span className="text-accent">Bikevzla</span> 888
           </span>
           <span>© 2026 · Venezuela y Latinoamérica</span>
         </div>

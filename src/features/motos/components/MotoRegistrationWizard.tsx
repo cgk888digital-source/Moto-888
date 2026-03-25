@@ -341,11 +341,11 @@ export function MotoRegistrationWizard({ initialNombre }: { initialNombre?: stri
           </form>
         )}
 
-        {/* STEP 3: Kit MotoSafe */}
+        {/* STEP 3: Kit Bikevzla 888 */}
         {step === 3 && (
           <form onSubmit={handleFinal}>
             <h2 className="font-display text-2xl font-semibold text-text-base uppercase tracking-wide mb-1">
-              Tu kit MotoSafe
+              Tu kit Bikevzla 888
             </h2>
             <p className="text-text-muted text-sm font-body mb-8">
               ¿Cómo quieres identificar tu moto?

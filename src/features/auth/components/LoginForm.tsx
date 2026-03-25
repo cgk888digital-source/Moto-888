@@ -25,7 +25,7 @@ export function LoginForm() {
         Bienvenido
       </h1>
       <p className="text-text-muted text-sm mb-8 font-body">
-        Accede a tu cuenta MotoSafe
+        Accede a tu cuenta Bikevzla 888
       </p>
 
       <form onSubmit={handleSubmit} className="space-y-4">

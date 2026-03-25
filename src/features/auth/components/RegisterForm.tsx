@@ -43,7 +43,7 @@ export function RegisterForm() {
         Crea tu cuenta
       </h1>
       <p className="text-text-muted text-sm mb-8 font-body">
-        Protege tu moto con MotoSafe
+        Protege tu moto con Bikevzla 888
       </p>
 
       <form onSubmit={handleSubmit} className="space-y-4">

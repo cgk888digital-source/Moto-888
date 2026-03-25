@@ -3,13 +3,13 @@ import Script from 'next/script'
 import './globals.css'
 
 export const metadata: Metadata = {
-  title: 'MotoVerse — El mundo completo de tu moto',
+  title: 'Bikevzla 888 — El mundo completo de tu moto',
   description: 'Mantenimiento AI, comunidad, marketplace y seguridad para motociclistas venezolanos',
   manifest: '/manifest.json',
   appleWebApp: {
     capable: true,
     statusBarStyle: 'black-translucent',
-    title: 'MotoVerse',
+    title: 'Bikevzla 888',
   },
   icons: {
     icon: '/icon.svg',
@@ -36,7 +36,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <link rel="apple-touch-icon" href="/icon-192.png" />
         <meta name="apple-mobile-web-app-capable" content="yes" />
         <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-        <meta name="apple-mobile-web-app-title" content="MotoVerse" />
+        <meta name="apple-mobile-web-app-title" content="Bikevzla 888" />
         {/* MS Tile */}
         <meta name="msapplication-TileColor" content="#f59e0b" />
         <meta name="msapplication-TileImage" content="/icon-192.png" />

@@ -14,7 +14,7 @@ export default async function VenderPage() {
     <div className="max-w-xl mx-auto space-y-6">
       <h1 className="font-display text-2xl font-bold text-text-base tracking-wide uppercase">
         {vendedor ? 'Publicar' : 'Empezar a vender'}
-        <span className="text-accent"> en MotoVerse</span>
+        <span className="text-accent"> en Bikevzla 888</span>
       </h1>
       <VenderForm vendedor={vendedor} />
     </div>

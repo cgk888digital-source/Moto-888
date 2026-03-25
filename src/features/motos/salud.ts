@@ -13,7 +13,7 @@ export interface ComponenteSalud {
   kmRestantes?: number
 }
 
-// Intervalos de aceite según tipo (del documento MotoVerse)
+// Intervalos de aceite según tipo (Bikevzla 888)
 const KM_ACEITE: Record<string, number> = {
   mineral: 3200,
   'semi-sintetico': 8000,

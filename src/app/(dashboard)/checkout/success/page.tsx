@@ -8,7 +8,7 @@ export default function CheckoutSuccessPage() {
         ¡Ya sos Pro!
       </h1>
       <p className="text-text-muted font-body text-sm max-w-sm mb-8 leading-relaxed">
-        Tu plan fue activado. Ahora tenés acceso ilimitado al Chat IA y todas las funciones Pro de MotoSafe.
+        Tu plan fue activado. Ahora tenés acceso ilimitado al Chat IA y todas las funciones Pro de Bikevzla 888.
       </p>
       <Link href="/dashboard" className="btn-primary px-8 py-3">
         Ir al dashboard

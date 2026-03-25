@@ -13,7 +13,7 @@ export function getStripe(): Stripe {
 
 export const STRIPE_PLANS = {
   pro: {
-    name: 'MotoSafe Pro',
+    name: 'Bikevzla 888 Pro',
     price_id: process.env.STRIPE_PRICE_ID_PRO ?? '',
     amount: 900, // $9.00 USD en centavos
   },

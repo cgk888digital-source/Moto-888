@@ -42,7 +42,7 @@ export default async function PortalNFCPage({ params }: Props) {
             </svg>
           </div>
           <h1 className="font-display text-xl font-bold text-white">Portal Mecánico</h1>
-          <p className="text-sm text-zinc-500">MotoVerse NFC</p>
+          <p className="text-sm text-zinc-500">Bikevzla 888 NFC</p>
         </div>
 
         {/* Moto card */}
@@ -106,7 +106,7 @@ export default async function PortalNFCPage({ params }: Props) {
 
         {/* Footer */}
         <p className="text-center text-xs text-zinc-600">
-          MotoVerse · El mundo completo de tu moto
+          Bikevzla 888 · El mundo completo de tu moto
         </p>
       </div>
     </div>

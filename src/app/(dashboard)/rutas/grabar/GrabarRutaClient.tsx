@@ -118,7 +118,7 @@ export function GrabarRutaClient({ rutaId, userId }: Props) {
       const trackPoints = puntosRef.current
         .map(p => `    <trkpt lat="${p.lat}" lon="${p.lng}"><time>${new Date(p.ts).toISOString()}</time></trkpt>`)
         .join('\n')
-      const gpxContent = `<?xml version="1.0"?><gpx version="1.1" creator="MotoVerse"><trk><trkseg>\n${trackPoints}\n</trkseg></trk></gpx>`
+      const gpxContent = `<?xml version="1.0"?><gpx version="1.1" creator="Bikevzla 888"><trk><trkseg>\n${trackPoints}\n</trkseg></trk></gpx>`
       const blob = new Blob([gpxContent], { type: 'application/gpx+xml' })
       // Por ahora guardamos el GPX inline como data URI (en producción se subiría a Storage)
       gpx_url = null // TODO: subir a Supabase Storage
