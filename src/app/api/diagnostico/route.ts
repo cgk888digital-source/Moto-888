@@ -2,13 +2,12 @@ import { NextRequest, NextResponse } from 'next/server'
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import { createClient } from '@/lib/supabase/server'
 import { MANUAL_KNOWLEDGE } from '@/lib/knowledge'
+import { rateLimitMiddleware } from '@/lib/rate-limit'
+import { validateRequest, DiagnosticoSchema } from '@/lib/validation'
 
-// Para cambiar a Claude Haiku en producción:
-// 1. npm install @anthropic-ai/sdk
-// 2. Reemplazar el bloque de llamada AI con la versión Anthropic
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY ?? '')
 
-const SYSTEM_PROMPT = `Eres Bikevzla 888 AI, un mecánico experto en motocicletas con 20 años de experiencia.
+const SYSTEM_PROMPT = `Eres Bikevzla 888 AI, un mecánico experto en motorcycles con 20 años de experiencia.
 Responde SIEMPRE en español, de forma clara y directa para un motociclista común.
 
 ---
@@ -30,7 +29,29 @@ Niveles de urgencia:
 - critico: peligro inmediato, detener la moto ya`
 
 export async function POST(req: NextRequest) {
+  const rateLimit = rateLimitMiddleware(req, 'api/diagnostico')
+  if (!rateLimit.allowed) {
+    return NextResponse.json(
+      { error: 'Demasiadas solicitudes. Intenta más tarde.', retryAfter: rateLimit.retryAfter },
+      { status: 429, headers: { 'Retry-After': String(rateLimit.retryAfter) } }
+    )
+  }
+
   try {
+    let body: unknown
+    try {
+      body = await req.json()
+    } catch {
+      return NextResponse.json({ error: 'JSON inválido' }, { status: 400 })
+    }
+
+    const validation = validateRequest(DiagnosticoSchema, body)
+    if (!validation.success) {
+      return NextResponse.json({ error: 'Datos inválidos', details: validation.errors }, { status: 400 })
+    }
+
+    const { sintoma, moto_id } = validation.data
+
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
@@ -44,11 +65,6 @@ export async function POST(req: NextRequest) {
 
     if (profile?.plan === 'free') {
       return NextResponse.json({ error: 'El diagnóstico requiere plan Pro' }, { status: 403 })
-    }
-
-    const { sintoma, moto_id } = await req.json()
-    if (!sintoma || !moto_id) {
-      return NextResponse.json({ error: 'Faltan campos requeridos' }, { status: 400 })
     }
 
     // Contexto de la moto

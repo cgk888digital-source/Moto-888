@@ -20,6 +20,10 @@ export async function createMoto(data: MotoFormData) {
     es_nueva: data.es_nueva,
     fecha_compra: data.fecha_compra || null,
     kit_tipo: data.kit_tipo,
+    tipo_motor: data.tipo_motor,
+    cilindrada: data.cilindrada,
+    placa: data.placa,
+    serial_motor: data.serial_motor,
   })
 
   if (error) return { error: error.message }
@@ -45,6 +49,10 @@ export async function updateMoto(motoId: string, data: Partial<MotoFormData>) {
     es_nueva: data.es_nueva,
     fecha_compra: data.fecha_compra || null,
     kit_tipo: data.kit_tipo,
+    tipo_motor: data.tipo_motor,
+    cilindrada: data.cilindrada,
+    placa: data.placa,
+    serial_motor: data.serial_motor,
   }).eq('id', motoId)
 
   if (error) return { error: error.message }

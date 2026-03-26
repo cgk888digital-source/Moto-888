@@ -29,12 +29,12 @@ export async function getMisGrupos(userId: string) {
   return data?.map((d: any) => d.grupo) ?? []
 }
 
-export async function isMiembro(grupoId: string, userId: string) {
+export async function getMembership(grupoId: string, userId: string) {
   const supabase = await createClient()
   const { data } = await supabase
     .from('grupo_miembros')
-    .select('user_id')
+    .select('user_id, rol')
     .match({ grupo_id: grupoId, user_id: userId })
     .single()
-  return !!data
+  return data
 }

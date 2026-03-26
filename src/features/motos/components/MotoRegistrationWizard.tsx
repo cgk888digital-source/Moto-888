@@ -28,6 +28,10 @@ export function MotoRegistrationWizard({ initialNombre }: { initialNombre?: stri
     km_actuales: 0,
     kit_tipo: 'digital',
     ano: YEAR_CURRENT,
+    tipo_motor: null,
+    cilindrada: null,
+    placa: null,
+    serial_motor: null,
   })
   const [error, setError] = useState<string | null>(null)
   const [isPending, startTransition] = useTransition()
@@ -73,6 +77,10 @@ export function MotoRegistrationWizard({ initialNombre }: { initialNombre?: stri
         marca: d.marca ?? prev.marca,
         modelo: d.modelo ?? prev.modelo,
         ano: d.ano ?? prev.ano,
+        tipo_motor: d.tipo_motor ?? prev.tipo_motor,
+        cilindrada: d.cilindrada ?? prev.cilindrada,
+        placa: d.placa ?? prev.placa,
+        serial_motor: d.serial_motor ?? prev.serial_motor,
       }))
       setOcrSuccess(true)
     } catch {
@@ -196,7 +204,7 @@ export function MotoRegistrationWizard({ initialNombre }: { initialNombre?: stri
               </button>
               {ocrSuccess && (
                 <p className="text-xs text-green-400 font-body mt-2 text-center">
-                  ✓ Marca, modelo y año rellenados automáticamente
+                  ✓ Datos del título extraídos automáticamente
                 </p>
               )}
             </div>
@@ -258,6 +266,62 @@ export function MotoRegistrationWizard({ initialNombre }: { initialNombre?: stri
                     min={0}
                     value={motoData.km_actuales ?? 0}
                     onChange={e => setMotoData(d => ({ ...d, km_actuales: Number(e.target.value) }))}
+                    className="input-base"
+                  />
+                </div>
+              </div>
+
+              {/* Cilindrada y Tipo de Motor */}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs text-text-muted uppercase tracking-wider mb-2 font-body">
+                    Cilindrada (cc)
+                  </label>
+                  <input
+                    type="text"
+                    value={motoData.cilindrada ?? ''}
+                    onChange={e => setMotoData(d => ({ ...d, cilindrada: e.target.value }))}
+                    placeholder="ej. 600, 1000..."
+                    className="input-base"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-text-muted uppercase tracking-wider mb-2 font-body">
+                    Tipo de Motor
+                  </label>
+                  <input
+                    type="text"
+                    value={motoData.tipo_motor ?? ''}
+                    onChange={e => setMotoData(d => ({ ...d, tipo_motor: e.target.value }))}
+                    placeholder="ej. 4T, 2T..."
+                    className="input-base"
+                  />
+                </div>
+              </div>
+
+              {/* Placa y Serial Motor */}
+              <div className="grid grid-cols-2 gap-3">
+                <div>
+                  <label className="block text-xs text-text-muted uppercase tracking-wider mb-2 font-body">
+                    Placa
+                  </label>
+                  <input
+                    type="text"
+                    value={motoData.placa ?? ''}
+                    onChange={e => setMotoData(d => ({ ...d, placa: e.target.value }))}
+                    placeholder="ej. AA1B22..."
+                    className="input-base"
+                  />
+                </div>
+                <div>
+                  <label className="block text-xs text-text-muted uppercase tracking-wider mb-2 font-body">
+                    Serial Motor
+                  </label>
+                  <input
+                    type="text"
+                    value={motoData.serial_motor ?? ''}
+                    onChange={e => setMotoData(d => ({ ...d, serial_motor: e.target.value }))}
+                    placeholder="ej. ABC123456..."
                     className="input-base"
                   />
                 </div>

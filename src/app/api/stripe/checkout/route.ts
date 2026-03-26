@@ -35,13 +35,16 @@ export async function POST(req: NextRequest) {
 
     const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? 'http://localhost:3000'
 
+    const { planId = 'standard' } = await req.json().catch(() => ({ planId: 'standard' }))
+    const plan = (STRIPE_PLANS as any)[planId] || STRIPE_PLANS.standard
+
     const session = await stripe.checkout.sessions.create({
       customer: customerId,
       mode: 'subscription',
       payment_method_types: ['card'],
       line_items: [
         {
-          price: STRIPE_PLANS.pro.price_id,
+          price: plan.price_id,
           quantity: 1,
         },
       ],

@@ -12,9 +12,19 @@ export function getStripe(): Stripe {
 }
 
 export const STRIPE_PLANS = {
-  pro: {
-    name: 'Bikevzla 888 Pro',
-    price_id: process.env.STRIPE_PRICE_ID_PRO ?? '',
-    amount: 900, // $9.00 USD en centavos
+  standard: {
+    name: 'Bikevzla 888 Standard',
+    price_id: process.env.STRIPE_PRICE_ID_STANDARD ?? '',
+    amount: 1000,
+  },
+  premium: {
+    name: 'Bikevzla 888 Premium',
+    price_id: process.env.STRIPE_PRICE_ID_PREMIUM ?? '',
+    amount: 2000,
+  },
+  elite: {
+    name: 'Bikevzla 888 Elite',
+    price_id: process.env.STRIPE_PRICE_ID_ELITE ?? '',
+    amount: 4000,
   },
 } as const

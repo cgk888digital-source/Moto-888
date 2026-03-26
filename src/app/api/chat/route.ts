@@ -4,6 +4,8 @@ import { createClient } from '@/lib/supabase/server'
 import { MANUAL_KNOWLEDGE } from '@/lib/knowledge'
 import { getMLToken } from '@/lib/ml-token'
 import type { MLRepuesto } from '@/features/chat/types'
+import { rateLimitMiddleware } from '@/lib/rate-limit'
+import { validateRequest, ChatMessageSchema } from '@/lib/validation'
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY ?? '')
 
@@ -83,7 +85,29 @@ async function buscarEnML(repuesto: string): Promise<MLRepuesto[]> {
 }
 
 export async function POST(req: NextRequest) {
+  const rateLimit = rateLimitMiddleware(req, 'api/chat')
+  if (!rateLimit.allowed) {
+    return NextResponse.json(
+      { error: 'Demasiadas solicitudes. Intenta más tarde.', retryAfter: rateLimit.retryAfter },
+      { status: 429, headers: { 'Retry-After': String(rateLimit.retryAfter) } }
+    )
+  }
+
   try {
+    let body: unknown
+    try {
+      body = await req.json()
+    } catch {
+      return NextResponse.json({ error: 'JSON inválido' }, { status: 400 })
+    }
+
+    const validation = validateRequest(ChatMessageSchema, body)
+    if (!validation.success) {
+      return NextResponse.json({ error: 'Datos inválidos', details: validation.errors }, { status: 400 })
+    }
+
+    const { moto_id, messages } = validation.data
+
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
     if (!user) return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
@@ -97,15 +121,6 @@ export async function POST(req: NextRequest) {
 
     if (profile?.plan === 'free') {
       return NextResponse.json({ error: 'El chat requiere plan Pro' }, { status: 403 })
-    }
-
-    const { moto_id, messages } = await req.json() as {
-      moto_id: string
-      messages: Array<{ role: 'user' | 'assistant'; content: string }>
-    }
-
-    if (!moto_id || !messages?.length) {
-      return NextResponse.json({ error: 'Faltan campos requeridos' }, { status: 400 })
     }
 
     // Contexto de la moto

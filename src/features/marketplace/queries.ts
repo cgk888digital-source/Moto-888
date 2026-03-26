@@ -1,12 +1,27 @@
 import { createClient } from '@/lib/supabase/server'
 import type { Producto, Vendedor } from './types'
 
-export async function getProductos(filters?: {
+export interface GetProductosParams {
   categoria?: string
   condicion?: string
   q?: string
-}): Promise<Producto[]> {
+  page?: number
+  limit?: number
+}
+
+export interface GetProductosResult {
+  productos: Producto[]
+  total: number
+  page: number
+  totalPages: number
+  hasMore: boolean
+}
+
+export async function getProductos(filters?: GetProductosParams): Promise<GetProductosResult> {
   const supabase = await createClient()
+  const page = filters?.page ?? 1
+  const limit = filters?.limit ?? 20
+  const offset = (page - 1) * limit
 
   let query = supabase
     .from('marketplace_productos')
@@ -16,20 +31,30 @@ export async function getProductos(filters?: {
       vendedor:marketplace_vendedores!marketplace_productos_vendedor_id_fkey(
         nombre_tienda, tipo, verificado, ubicacion, rating_promedio
       )
-    `)
+    `, { count: 'exact' })
     .eq('estado', 'activo')
-    .order('created_at', { ascending: false })
-    .limit(60)
 
   if (filters?.categoria) query = query.eq('categoria', filters.categoria)
   if (filters?.condicion) query = query.eq('condicion', filters.condicion)
   if (filters?.q) query = query.ilike('titulo', `%${filters.q}%`)
 
-  const { data } = await query
-  return (data ?? []).map((p: any) => ({
-    ...p,
-    vendedor: Array.isArray(p.vendedor) ? p.vendedor[0] : p.vendedor,
-  })) as Producto[]
+  const { data, count } = await query
+    .order('created_at', { ascending: false })
+    .range(offset, offset + limit - 1)
+
+  const total = count ?? 0
+  const totalPages = Math.ceil(total / limit)
+
+  return {
+    productos: ((data ?? []) as any[]).map((p: any) => ({
+      ...p,
+      vendedor: Array.isArray(p.vendedor) ? p.vendedor[0] : p.vendedor,
+    })) as Producto[],
+    total,
+    page,
+    totalPages,
+    hasMore: page < totalPages,
+  }
 }
 
 export async function getProducto(id: string): Promise<Producto | null> {

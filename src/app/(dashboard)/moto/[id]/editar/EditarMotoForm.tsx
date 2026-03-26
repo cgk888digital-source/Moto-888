@@ -21,6 +21,10 @@ export function EditarMotoForm({ moto }: { moto: Tables<'motos'> }) {
   const [km, setKm] = useState(moto.km_actuales)
   const [tipoAceite, setTipoAceite] = useState(moto.tipo_aceite as TipoAceite)
   const [esNueva, setEsNueva] = useState(moto.es_nueva)
+  const [tipoMotor, setTipoMotor] = useState((moto as any).tipo_motor || '')
+  const [cilindrada, setCilindrada] = useState((moto as any).cilindrada || '')
+  const [placa, setPlaca] = useState((moto as any).placa || '')
+  const [serialMotor, setSerialMotor] = useState((moto as any).serial_motor || '')
   const [error, setError] = useState<string | null>(null)
   const [isPending, startTransition] = useTransition()
 
@@ -37,6 +41,10 @@ export function EditarMotoForm({ moto }: { moto: Tables<'motos'> }) {
         es_nueva: esNueva,
         fecha_compra: moto.fecha_compra,
         kit_tipo: (moto.kit_tipo ?? 'digital') as any,
+        tipo_motor: tipoMotor,
+        cilindrada,
+        placa,
+        serial_motor: serialMotor,
       })
       if (result?.error) setError(result.error)
     })
@@ -94,6 +102,54 @@ export function EditarMotoForm({ moto }: { moto: Tables<'motos'> }) {
             required
             value={km}
             onChange={e => setKm(Number(e.target.value))}
+            className="input-base"
+          />
+        </div>
+      </div>
+
+      {/* Cilindrada y Tipo de Motor */}
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className="label-field">Cilindrada (cc)</label>
+          <input
+            type="text"
+            value={cilindrada}
+            onChange={e => setCilindrada(e.target.value)}
+            placeholder="ej. 600, 1000..."
+            className="input-base"
+          />
+        </div>
+        <div>
+          <label className="label-field">Tipo de Motor</label>
+          <input
+            type="text"
+            value={tipoMotor}
+            onChange={e => setTipoMotor(e.target.value)}
+            placeholder="ej. 4T, 2T..."
+            className="input-base"
+          />
+        </div>
+      </div>
+
+      {/* Placa y Serial Motor */}
+      <div className="grid grid-cols-2 gap-3">
+        <div>
+          <label className="label-field">Placa</label>
+          <input
+            type="text"
+            value={placa}
+            onChange={e => setPlaca(e.target.value)}
+            placeholder="ej. AA1B22..."
+            className="input-base"
+          />
+        </div>
+        <div>
+          <label className="label-field">Serial Motor</label>
+          <input
+            type="text"
+            value={serialMotor}
+            onChange={e => setSerialMotor(e.target.value)}
+            placeholder="ej. ABC123456..."
             className="input-base"
           />
         </div>

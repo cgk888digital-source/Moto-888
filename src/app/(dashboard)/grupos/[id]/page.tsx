@@ -1,9 +1,11 @@
 import { createClient } from '@/lib/supabase/server'
 import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
-import { getGrupo, isMiembro } from '@/features/grupos/queries'
-import { toggleMembership } from '@/features/grupos/actions'
+import { getGrupo, getMembership } from '@/features/grupos/queries'
+import { joinGroup, leaveGroup } from '@/features/grupos/actions'
+import { JoinGroupFlow } from './JoinGroupFlow'
 import { GrupoFotos } from './GrupoFotos'
+import { GrupoChat } from './GrupoChat'
 
 export default async function GrupoPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params
@@ -11,9 +13,9 @@ export default async function GrupoPage({ params }: { params: Promise<{ id: stri
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) redirect('/login')
 
-  const [grupo, miembro, fotosResult] = await Promise.all([
+  const [grupo, membership, fotosResult] = await Promise.all([
     getGrupo(id),
-    isMiembro(id, user.id),
+    getMembership(id, user.id),
     supabase
       .from('grupo_fotos')
       .select('id, url, descripcion, user_id, created_at')
@@ -23,24 +25,21 @@ export default async function GrupoPage({ params }: { params: Promise<{ id: stri
 
   if (!grupo) notFound()
 
-  const esAdmin = grupo.admin_id === user.id
-  const esMiembro = miembro || esAdmin
-  const adminNombre = (grupo as any).admin?.nombre ?? 'Admin'
+  const esAdmin = membership?.rol === 'admin'
+  const esMiembro = !!membership
+  const adminNombre = (grupo as any).admin?.nombre ?? 'Fundador'
   const fotos = fotosResult.data ?? []
 
-  async function handleToggle() {
-    'use server'
-    await toggleMembership(id, miembro)
-    redirect(`/grupos/${id}`)
-  }
-
   return (
-    <div className="max-w-2xl mx-auto space-y-6">
+    <div className="max-w-2xl mx-auto space-y-6 pb-20">
       {/* Header */}
-      <div className="bg-surface border border-border rounded-xl p-6">
+      <div className="bg-surface border border-border rounded-xl p-6 relative overflow-hidden">
+        {/* Background gradient subtle */}
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-accent/20 via-accent to-accent/20" />
+        
         <div className="flex items-start gap-4">
-          <div className="w-16 h-16 rounded-xl bg-accent/10 flex items-center justify-center text-3xl flex-shrink-0">
-            👥
+          <div className="w-16 h-16 rounded-2xl bg-accent shadow-lg shadow-accent/20 flex items-center justify-center text-3xl flex-shrink-0 text-bg">
+            {grupo.tipo === 'rodada' ? '🏍️' : '👥'}
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-2 flex-wrap">
@@ -50,63 +49,91 @@ export default async function GrupoPage({ params }: { params: Promise<{ id: stri
               {esAdmin && (
                 <Link
                   href={`/grupos/${id}/editar`}
-                  className="ml-auto p-1.5 rounded-lg text-text-muted hover:text-accent hover:bg-accent/10 transition-colors"
-                  title="Editar grupo"
+                  className="ml-auto p-2 rounded-lg bg-surface-2 text-text-muted hover:text-accent border border-border transition-all"
+                  title="Ajustes de grupo"
                 >
-                  ✏️
+                  ⚙️
                 </Link>
               )}
-              <span className={`text-xs px-2 py-0.5 rounded-full font-body ${
-                grupo.tipo === 'publico'
-                  ? 'bg-green-900/40 text-green-400'
+              <span className={`text-[10px] uppercase tracking-widest px-2 py-0.5 rounded-full font-display font-bold ${
+                grupo.tipo === 'publico' || grupo.tipo === 'RODADA'
+                  ? 'bg-green-500/10 text-green-400'
                   : 'bg-border text-text-muted'
               }`}>
-                {grupo.tipo === 'publico' ? '🌐 Público' : '🔒 Privado'}
+                {grupo.tipo === 'RODADA' ? '🏁 RODADA' : (grupo.tipo === 'publico' ? '🌐 Público' : '🔒 Privado')}
               </span>
             </div>
             {grupo.categoria && (
-              <span className="text-xs bg-accent/10 text-accent px-2 py-0.5 rounded-full font-body mt-1 inline-block">
-                {grupo.categoria}
+              <span className="text-xs bg-accent/10 text-accent px-2 py-0.5 rounded-full font-body mt-2 inline-block">
+                📂 {grupo.categoria}
               </span>
             )}
             {grupo.descripcion && (
-              <p className="text-sm text-text-muted font-body mt-2 leading-relaxed">
+              <p className="text-sm text-text-muted font-body mt-3 leading-relaxed whitespace-pre-wrap">
                 {grupo.descripcion}
               </p>
             )}
           </div>
         </div>
 
-        {/* Stats */}
-        <div className="grid grid-cols-2 gap-3 mt-5 pt-5 border-t border-border">
-          <div className="text-center">
-            <p className="text-xl font-display font-bold text-accent">{grupo.miembros_count ?? 0}</p>
-            <p className="text-xs text-text-muted font-body">Miembros</p>
+        {/* Info Bars */}
+        <div className="grid grid-cols-2 gap-4 mt-6 pt-6 border-t border-border">
+          <div className="flex items-center gap-3">
+            <div className="text-accent">👥</div>
+            <div>
+              <p className="text-lg font-display font-bold text-text-base leading-none">{grupo.miembros_count ?? 1}</p>
+              <p className="text-[10px] uppercase tracking-wider text-text-muted font-body">Miembros</p>
+            </div>
           </div>
-          <div className="text-center">
-            <p className="text-sm font-body text-text-muted truncate">{adminNombre}</p>
-            <p className="text-xs text-text-muted font-body">Admin</p>
+          <div className="flex items-center gap-3">
+            <div className="text-accent">👑</div>
+            <div className="min-w-0">
+              <p className="text-sm font-bold text-text-base leading-none truncate">{adminNombre}</p>
+              <p className="text-[10px] uppercase tracking-wider text-text-muted font-body">Admin</p>
+            </div>
           </div>
         </div>
 
-        {/* Acción miembro */}
-        {!esAdmin && (
-          <form action={handleToggle} className="mt-4">
-            <button
-              type="submit"
-              className={`w-full py-2.5 rounded-lg text-sm font-body font-semibold transition-colors ${
-                miembro
-                  ? 'border border-border text-text-muted hover:border-red-500 hover:text-red-400'
-                  : 'bg-accent text-bg hover:bg-amber-400'
-              }`}
-            >
-              {miembro ? 'Salir del grupo' : '+ Unirse al grupo'}
-            </button>
-          </form>
-        )}
-        {esAdmin && (
-          <p className="mt-4 text-center text-xs text-accent font-body">⭐ Eres el administrador de este grupo</p>
-        )}
+        {/* Status Badge / Action */}
+        <div className="mt-6">
+          {!esMiembro ? (
+            <JoinGroupFlow grupoId={id} grupoNombre={grupo.nombre} />
+          ) : (
+            <div className="flex items-center justify-between p-3 bg-bg border border-border rounded-xl">
+              <div className="flex items-center gap-2">
+                <span className="text-green-400 text-xs">●</span>
+                <span className="text-xs font-body text-text-base">Eres {esAdmin ? 'Administrador' : 'Miembro'}</span>
+              </div>
+              {!esAdmin && (
+                <form action={async () => { 'use server'; await leaveGroup(id); redirect('/grupos') }}>
+                  <button type="submit" className="text-xs text-red-400 hover:text-red-300 font-body px-2 py-1">Salir</button>
+                </form>
+              )}
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Group Content Tabs (Simple toggle) */}
+      <div className="space-y-6">
+        <GrupoChat 
+          grupoId={id} 
+          userId={user.id} 
+          esMiembro={esMiembro} 
+          grupoNombre={grupo.nombre} 
+        />
+        
+        <div className="bg-surface border border-border rounded-xl p-6">
+          <h2 className="font-display font-bold text-text-base mb-4 flex items-center gap-2">
+            📸 Galería de la Comunidad
+          </h2>
+          <GrupoFotos
+            grupoId={id}
+            userId={user.id}
+            esMiembro={esMiembro}
+            initialFotos={fotos}
+          />
+        </div>
       </div>
 
       {/* Galería de fotos */}

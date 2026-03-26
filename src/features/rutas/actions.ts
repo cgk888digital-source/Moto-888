@@ -26,7 +26,8 @@ export async function createRuta(formData: FormData) {
   redirect(`/rutas/${data.id}`)
 }
 
-export async function guardarTelemetria(payload: {
+export async function upsertTelemetria(payload: {
+  id?: string
   ruta_id: string | null
   distancia_km: number
   duracion_seg: number
@@ -40,9 +41,14 @@ export async function guardarTelemetria(payload: {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return { error: 'No autenticado' }
 
-  const { error } = await supabase.from('telemetria_rutas').insert({ user_id: user.id, ...payload })
+  const { data, error } = await supabase
+    .from('telemetria_rutas')
+    .upsert({ user_id: user.id, ...payload })
+    .select('id')
+    .single()
+
   if (error) return { error: error.message }
-  return { ok: true }
+  return { ok: true, id: data.id }
 }
 
 export async function addComentarioRuta(rutaId: string, contenido: string) {

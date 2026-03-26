@@ -10,6 +10,10 @@ export interface MotoFormData {
   es_nueva: boolean
   fecha_compra: string | null
   kit_tipo: KitTipo
+  tipo_motor: string | null
+  cilindrada: string | null
+  placa: string | null
+  serial_motor: string | null
 }
 
 export const MARCAS_MOTO = [

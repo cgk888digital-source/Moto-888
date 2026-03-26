@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server'
 import { GoogleGenerativeAI } from '@google/generative-ai'
 import { createClient } from '@/lib/supabase/server'
+import { rateLimitMiddleware } from '@/lib/rate-limit'
 
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY ?? '')
 
@@ -12,6 +13,8 @@ Extrae exactamente los siguientes campos en formato JSON:
   "ano": number,
   "serial_motor": string,
   "placa": string,
+  "tipo_motor": string,
+  "cilindrada": string,
   "nombre_propietario": string,
   "fecha_documento": string
 }
@@ -19,6 +22,14 @@ Si algún campo no es legible o no aparece en la imagen, ponlo como null.
 Responde SOLO con el JSON, sin explicaciones adicionales.`
 
 export async function POST(req: NextRequest) {
+  const rateLimit = rateLimitMiddleware(req, 'api/ocr-titulo')
+  if (!rateLimit.allowed) {
+    return NextResponse.json(
+      { error: 'Demasiadas solicitudes. Intenta más tarde.', retryAfter: rateLimit.retryAfter },
+      { status: 429, headers: { 'Retry-After': String(rateLimit.retryAfter) } }
+    )
+  }
+
   try {
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()

@@ -1,9 +1,10 @@
 'use client'
-import { useState, useRef, useTransition } from 'react'
+import { useState, useRef, useTransition, useEffect } from 'react'
 import Link from 'next/link'
 import type { Producto } from '@/features/marketplace/types'
 import { COMISION_POR_PRECIO } from '@/features/marketplace/types'
 import { toggleGuardado, sendMensaje } from '@/features/marketplace/actions'
+import { createClient } from '@/lib/supabase/client'
 
 interface Mensaje {
   id: string
@@ -28,10 +29,36 @@ export function ProductoDetailClient({ producto, mensajes: initMensajes, userId,
   const [pending, startTransition] = useTransition()
   const chatRef = useRef<HTMLDivElement>(null)
 
+  const isOwnProduct = vendedorUserId === userId
+
+  // Realtime subscription for the buyer thread
+  useEffect(() => {
+    if (isOwnProduct) return
+    const supabase = createClient()
+    const channel = supabase
+      .channel(`prod-chat-${producto.id}-${userId}`)
+      .on(
+        'postgres_changes',
+        { event: 'INSERT', schema: 'public', table: 'marketplace_mensajes', filter: `producto_id=eq.${producto.id}` },
+        (payload) => {
+          const msg = payload.new as any
+          const isRelevant = (msg.remitente_id === userId && msg.destinatario_id === vendedorUserId) ||
+                            (msg.remitente_id === vendedorUserId && msg.destinatario_id === userId)
+          if (isRelevant) {
+            setMensajes(prev => [...prev, msg])
+          }
+        }
+      ).subscribe()
+    return () => { supabase.removeChannel(channel) }
+  }, [producto.id, userId, vendedorUserId, isOwnProduct])
+
+  useEffect(() => {
+    chatRef.current?.scrollTo({ top: chatRef.current.scrollHeight, behavior: 'smooth' })
+  }, [mensajes])
+
   const comision = COMISION_POR_PRECIO(producto.precio)
   const totalComprador = (producto.precio * (1 + comision)).toFixed(2)
   const fotos = producto.fotos ?? []
-  const isOwnProduct = vendedorUserId === userId
 
   function handleGuardado() {
     setGuardado(g => !g)
@@ -40,18 +67,18 @@ export function ProductoDetailClient({ producto, mensajes: initMensajes, userId,
 
   async function handleMensaje(e: React.FormEvent) {
     e.preventDefault()
-    if (!mensaje.trim() || !vendedorUserId) return
+    if (!mensaje.trim() || !vendedorUserId || isOwnProduct) return
+    const content = mensaje
+    setMensaje('')
     startTransition(async () => {
-      const res = await sendMensaje(producto.id, vendedorUserId, mensaje)
-      if (!res?.error) {
-        setMensajes(prev => [...prev, {
-          id: Date.now().toString(),
-          contenido: mensaje,
-          remitente_id: userId,
-          created_at: new Date().toISOString(),
-        }])
-        setMensaje('')
-      }
+      await sendMensaje(producto.id, vendedorUserId, content)
+      // Optimistic update
+      setMensajes(prev => [...prev, {
+        id: Date.now().toString(),
+        contenido: content,
+        remitente_id: userId,
+        created_at: new Date().toISOString(),
+      }])
     })
   }
 
@@ -99,10 +126,7 @@ export function ProductoDetailClient({ producto, mensajes: initMensajes, userId,
           <div className="bg-surface border border-border rounded-xl p-4">
             <p className="text-3xl font-display font-bold text-accent">${producto.precio}</p>
             <p className="text-sm text-text-muted font-body mt-1">
-              Precio total para el comprador: <span className="text-text-base font-semibold">${totalComprador}</span>
-            </p>
-            <p className="text-xs text-text-muted font-body mt-0.5">
-              ({(comision * 100).toFixed(1)}% comisión de plataforma · el vendedor recibe ${producto.precio})
+              Precio final: <span className="text-text-base font-semibold">${totalComprador}</span>
             </p>
           </div>
 
@@ -160,43 +184,62 @@ export function ProductoDetailClient({ producto, mensajes: initMensajes, userId,
       <div className="bg-surface border border-border rounded-xl p-5 space-y-4">
         <div className="flex items-center justify-between">
           <h2 className="font-display font-bold text-text-base">Chat con el vendedor</h2>
-          {!isOwnProduct && vendedorUserId && (
+          {isOwnProduct ? (
+             <Link href="/marketplace/mensajes" className="text-xs text-accent hover:underline font-body">
+              Gestionar todos los chats de este producto →
+            </Link>
+          ) : vendedorUserId && (
             <Link href={`/marketplace/mensajes/${producto.id}?con=${vendedorUserId}`} className="text-xs text-accent hover:underline font-body">
               Ver conversación completa →
             </Link>
           )}
         </div>
 
-        <div ref={chatRef} className="space-y-2 max-h-60 overflow-y-auto">
-          {mensajes.length === 0 ? (
-            <p className="text-sm text-text-muted font-body text-center py-4">Hacé una pregunta sobre el producto</p>
-          ) : (
-            mensajes.map(m => (
-              <div key={m.id} className={`flex ${m.remitente_id === userId ? 'justify-end' : 'justify-start'}`}>
-                <div className={`max-w-xs px-3 py-2 rounded-xl text-sm font-body ${
-                  m.remitente_id === userId
-                    ? 'bg-accent text-bg'
-                    : 'bg-bg border border-border text-text-base'
-                }`}>
-                  {m.contenido}
-                </div>
-              </div>
-            ))
-          )}
-        </div>
+        {isOwnProduct ? (
+          <div className="py-8 text-center bg-bg border border-dashed border-border rounded-xl px-6">
+            <p className="text-2xl mb-2">💬</p>
+            <p className="text-sm font-semibold text-text-base font-body">Eres el dueño de este producto</p>
+            <p className="text-xs text-text-muted font-body mt-1">
+              Las consultas de posibles compradores aparecerán en tu bandeja de entrada de mensajes.
+            </p>
+            <Link href="/marketplace/mensajes" className="mt-4 inline-block btn-primary text-xs py-2 px-4">
+              Ir a mis Mensajes
+            </Link>
+          </div>
+        ) : (
+          <>
+            <div ref={chatRef} className="space-y-2 max-h-60 overflow-y-auto pr-2">
+              {mensajes.length === 0 ? (
+                <p className="text-sm text-text-muted font-body text-center py-4">Haz una pregunta sobre el producto</p>
+              ) : (
+                mensajes.map(m => (
+                  <div key={m.id} className={`flex ${m.remitente_id === userId ? 'justify-end' : 'justify-start'}`}>
+                    <div className={`max-w-xs px-3 py-2 rounded-xl text-sm font-body ${
+                      m.remitente_id === userId
+                        ? 'bg-accent text-bg'
+                        : 'bg-bg border border-border text-text-base'
+                    }`}>
+                      {m.contenido}
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
 
-        <form onSubmit={handleMensaje} className="flex gap-2">
-          <input
-            value={mensaje}
-            onChange={e => setMensaje(e.target.value)}
-            placeholder="Escribe tu mensaje..."
-            className="flex-1 bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text-base placeholder-text-muted focus:outline-none focus:border-accent font-body"
-          />
-          <button type="submit" disabled={pending || !mensaje.trim()}
-            className="bg-accent text-bg px-4 py-2 rounded-lg text-sm font-body font-semibold hover:bg-amber-400 transition-colors disabled:opacity-50">
-            Enviar
-          </button>
-        </form>
+            <form onSubmit={handleMensaje} className="flex gap-2">
+              <input
+                value={mensaje}
+                onChange={e => setMensaje(e.target.value)}
+                placeholder="Escribe tu mensaje..."
+                className="flex-1 bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text-base placeholder-text-muted focus:outline-none focus:border-accent font-body"
+              />
+              <button type="submit" disabled={pending || !mensaje.trim()}
+                className="bg-accent text-bg px-4 py-2 rounded-lg text-sm font-body font-semibold hover:bg-amber-400 transition-colors disabled:opacity-50">
+                {pending ? '...' : 'Enviar'}
+              </button>
+            </form>
+          </>
+        )}
       </div>
     </div>
   )
