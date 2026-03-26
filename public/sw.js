@@ -1,12 +1,12 @@
-const CACHE_NAME = 'bikevzla-v2'
+const CACHE_NAME = 'bikevzla-v3'
 const OFFLINE_URL = '/offline'
 
 // Assets a cachear inmediatamente (cache-first)
 const PRECACHE_ASSETS = [
-  '/',
   '/offline',
   '/manifest.json',
-  '/icon.svg',
+  '/icon-192.png',
+  '/icon-512.png',
 ]
 
 self.addEventListener('install', event => {
