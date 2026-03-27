@@ -11,6 +11,8 @@ export interface ComponenteSalud {
   kmActuales: number
   ultimaFecha?: string
   kmRestantes?: number
+  intervalo: number
+  tipos: string[]
 }
 
 // Intervalos de aceite según tipo (Bikevzla 888)
@@ -40,7 +42,7 @@ const COMPONENTES_CONFIG = [
     id: 'frenos',
     nombre: 'Frenos',
     icono: '🛑',
-    tipos: ['Revisión de frenos', 'Cambio de pastillas de freno', 'Cambio de líquido de frenos'],
+    tipos: ['Revisión de frenos', 'Cambio de pastillas de freno'],
     intervalKm: 10000,
   },
   {
@@ -61,8 +63,85 @@ const COMPONENTES_CONFIG = [
     id: 'general',
     nombre: 'Revisión',
     icono: '🔧',
-    tipos: ['Revisión general', 'Ajuste de válvulas'],
+    tipos: ['Revisión general'],
     intervalKm: 10000,
+  },
+  {
+    id: 'rodamientos',
+    nombre: 'Rodamientos',
+    icono: '⚙️',
+    tipos: ['Revisión de rodamientos', 'Engrase de ejes'],
+    intervalKm: 10000,
+  },
+  {
+    id: 'suspensiones',
+    nombre: 'Suspensiones',
+    icono: '🦵',
+    tipos: ['Revisión de suspensiones', 'Cambio de aceite de horquilla'],
+    intervalKm: 15000,
+  },
+  {
+    id: 'embrague',
+    nombre: 'Embrague',
+    icono: '⛓️‍💥',
+    tipos: ['Revisión de embrague', 'Ajuste de embrague'],
+    intervalKm: 15000,
+  },
+  {
+    id: 'valvulas',
+    nombre: 'Válvulas',
+    icono: '🔩',
+    tipos: ['Ajuste de válvulas', 'Ajuste de balancines'],
+    intervalKm: 10000,
+  },
+  {
+    id: 'kit-arrastre',
+    nombre: 'Kit arrastre',
+    icono: '⛓',
+    tipos: ['Cambio de kit de arrastre', 'Cambio de piñones'],
+    intervalKm: 20000,
+  },
+  {
+    id: 'guayas',
+    nombre: 'Cables/Guayas',
+    icono: '🧶',
+    tipos: ['Lubricación de guayas', 'Revisión de cables'],
+    intervalKm: 5000,
+  },
+  {
+    id: 'bateria',
+    nombre: 'Batería',
+    icono: '🔋',
+    tipos: ['Revisión de batería', 'Carga de batería'],
+    intervalKm: 6000,
+  },
+  {
+    id: 'luces',
+    nombre: 'Luces',
+    icono: '💡',
+    tipos: ['Revisión de luces y fusibles'],
+    intervalKm: 6000,
+  },
+  {
+    id: 'sistema-carga',
+    nombre: 'Sistema carga',
+    icono: '⚡',
+    tipos: ['Revisión de sistema de carga', 'Revisión de estator'],
+    intervalKm: 10000,
+  },
+  {
+    id: 'inyectores',
+    nombre: 'Inyectores/Carb',
+    icono: '🧪',
+    tipos: ['Limpieza de inyectores', 'Limpieza de carburador'],
+    intervalKm: 12000,
+  },
+  {
+    id: 'liquido-frenos',
+    nombre: 'Líq. frenos',
+    icono: '🧴',
+    tipos: ['Cambio de líquido de frenos'],
+    intervalKm: 15000,
   },
 ] as const
 
@@ -76,18 +155,27 @@ export function calcularSalud(
   return COMPONENTES_CONFIG.map((comp) => {
     // Buscar el último mantenimiento que coincida con alguno de los tipos del componente
     const ultimos = mantenimientos
-      .filter((m) => comp.tipos.some((t) => t === m.tipo_servicio))
+      .filter((m) => {
+        const servicio = m.tipo_servicio.trim()
+        return comp.tipos.some((t) => t.trim() === servicio)
+      })
       .sort((a, b) => b.km_al_servicio - a.km_al_servicio)
 
     const ultimo = ultimos[0]
 
     if (!ultimo) {
+      const intervalo = comp.id === 'aceite'
+        ? (KM_ACEITE[tipoAceite] ?? 3200)
+        : comp.intervalKm
+
       return {
         id: comp.id,
         nombre: comp.nombre,
         icono: comp.icono,
         estado: 'sin-datos',
         kmActuales,
+        intervalo,
+        tipos: [...comp.tipos],
       }
     }
 
@@ -117,6 +205,8 @@ export function calcularSalud(
       kmActuales,
       ultimaFecha: ultimo.fecha,
       kmRestantes: Math.max(0, kmRestantes),
+      intervalo,
+      tipos: [...comp.tipos],
     }
   })
 }

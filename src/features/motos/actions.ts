@@ -59,6 +59,21 @@ export async function updateMoto(motoId: string, data: Partial<MotoFormData>) {
   redirect('/dashboard')
 }
 
+export async function updateMotoKm(motoId: string, km: number) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: 'No autenticado' }
+
+  const { error } = await supabase
+    .from('motos')
+    .update({ km_actuales: km })
+    .eq('id', motoId)
+    .eq('user_id', user.id)
+
+  if (error) return { error: error.message }
+  return { success: true }
+}
+
 export async function updateUserNombre(nombre: string) {
   const supabase = await createClient()
 
