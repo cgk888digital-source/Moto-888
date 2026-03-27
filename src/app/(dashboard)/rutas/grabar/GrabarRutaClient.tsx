@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useEffect, useRef } from 'react'
-import { guardarTelemetria } from '@/features/rutas/actions'
+import { upsertTelemetria } from '@/features/rutas/actions'
 import Link from 'next/link'
 
 interface Props {
@@ -124,7 +124,7 @@ export function GrabarRutaClient({ rutaId, userId }: Props) {
       gpx_url = null // TODO: subir a Supabase Storage
     }
 
-    const result = await guardarTelemetria({
+    const result = await upsertTelemetria({
       ruta_id: rutaId,
       distancia_km: Math.round(distancia * 100) / 100,
       duracion_seg: elapsed,

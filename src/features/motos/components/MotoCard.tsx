@@ -1,6 +1,4 @@
-'use client'
-
-import { memo, Suspense } from 'react'
+import { Suspense } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import type { Tables } from '@/types/database.types'
@@ -22,7 +20,7 @@ interface Props {
   moto: Tables<'motos'>
 }
 
-export const MotoCard = memo(function MotoCard({ moto }: Props) {
+export function MotoCard({ moto }: Props) {
   return (
     <article className="bg-surface border border-border rounded-2xl overflow-hidden" aria-label={`Moto: ${moto.marca} ${moto.modelo}`}>
       <header className="bg-surface-2 px-6 py-5 border-b border-border">
@@ -97,7 +95,7 @@ export const MotoCard = memo(function MotoCard({ moto }: Props) {
       </nav>
     </article>
   )
-})
+}
 
 function Stat({
   label,
