@@ -21,8 +21,8 @@ export async function GET(req: Request) {
     // 1. Usuarios con vencimiento en 7 días
     const { data: users7Days } = await supabase
       .from('users')
-      .select('email, nombre, subscription_expires_at')
-      .eq('subscription_expires_at', date7Days)
+      .select('email, nombre')
+      .filter('subscription_expires_at', 'eq', date7Days) as { data: { email: string; nombre: string | null }[] | null }
 
     if (users7Days) {
       for (const user of users7Days) {
@@ -41,8 +41,8 @@ export async function GET(req: Request) {
     // 2. Usuarios con vencimiento en 3 días
     const { data: users3Days } = await supabase
       .from('users')
-      .select('email, nombre, subscription_expires_at')
-      .eq('subscription_expires_at', date3Days)
+      .select('email, nombre')
+      .filter('subscription_expires_at', 'eq', date3Days) as { data: { email: string; nombre: string | null }[] | null }
 
     if (users3Days) {
       for (const user of users3Days) {
