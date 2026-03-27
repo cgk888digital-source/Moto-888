@@ -1,6 +1,10 @@
 import { Resend } from 'resend'
 
-const resend = new Resend(process.env.RESEND_API_KEY)
+let _resend: Resend | null = null
+function getResend() {
+  if (!_resend) _resend = new Resend(process.env.RESEND_API_KEY ?? 'placeholder')
+  return _resend
+}
 
 interface EmailOptions {
   to: string
@@ -61,7 +65,7 @@ export async function sendEmail({
   `
 
   try {
-    const { data, error } = await resend.emails.send({
+    const { data, error } = await getResend().emails.send({
       from: 'BikeVzla 888 <info@bikevzla888.com>',
       to,
       subject,

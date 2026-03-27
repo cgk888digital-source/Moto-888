@@ -134,7 +134,8 @@ export async function sendGrupoMensaje(grupoId: string, contenido: string) {
 
   if (!miembro) return { error: 'Debes unirte al grupo para chatear' }
 
-  const { error } = await supabase.from('grupo_mensajes').insert({
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  const { error } = await (supabase as any).from('grupo_mensajes').insert({
     grupo_id: grupoId,
     user_id: user.id,
     contenido: contenido.trim(),
