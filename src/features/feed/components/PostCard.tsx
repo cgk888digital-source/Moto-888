@@ -13,7 +13,7 @@ interface Comentario {
 
 const TIPO_BADGE: Record<string, string> = {
   general:    '',
-  ruta:       'bg-blue-900/40 text-blue-300',
+  ruta:       'bg-secondary-muted text-secondary border border-secondary/30',
   evento:     'bg-purple-900/40 text-purple-300',
   marketplace:'bg-green-900/40 text-green-300',
 }
@@ -86,7 +86,7 @@ export function PostCard({ post }: { post: Post }) {
       {/* Header */}
       <div className="flex items-start justify-between gap-2">
         <div className="flex items-center gap-2">
-          <div className="w-9 h-9 rounded-full bg-accent/20 flex items-center justify-center text-accent font-display font-bold text-sm">
+          <div className="w-9 h-9 rounded-full bg-secondary-muted flex items-center justify-center text-secondary font-display font-bold text-sm">
             {(post.autor?.nombre ?? post.autor?.email ?? '?')[0].toUpperCase()}
           </div>
           <div>
@@ -130,7 +130,7 @@ export function PostCard({ post }: { post: Post }) {
         </button>
         <button
           onClick={handleToggleComments}
-          className="flex items-center gap-1.5 text-sm text-text-muted hover:text-accent font-body transition-colors"
+          className="flex items-center gap-1.5 text-sm text-text-muted hover:text-secondary font-body transition-colors"
         >
           <span>💬</span>
           <span>{comentariosCount}</span>
@@ -147,7 +147,7 @@ export function PostCard({ post }: { post: Post }) {
             <div className="space-y-2">
               {comentarios.map(c => (
                 <div key={c.id} className="flex gap-2">
-                  <div className="w-7 h-7 rounded-full bg-accent/20 flex items-center justify-center text-accent font-bold text-xs shrink-0 font-display">
+                  <div className="w-7 h-7 rounded-full bg-secondary-muted flex items-center justify-center text-secondary font-bold text-xs shrink-0 font-display">
                     {(c.autor?.nombre ?? '?')[0].toUpperCase()}
                   </div>
                   <div className="flex-1 bg-bg border border-border rounded-lg px-3 py-2">
@@ -169,7 +169,7 @@ export function PostCard({ post }: { post: Post }) {
               value={comentario}
               onChange={e => setComentario(e.target.value)}
               placeholder="Escribe un comentario..."
-              className="flex-1 bg-bg border border-border rounded-lg px-3 py-1.5 text-sm text-text-base placeholder-text-muted focus:outline-none focus:border-accent font-body"
+              className="flex-1 bg-bg border border-border rounded-lg px-3 py-1.5 text-sm text-text-base placeholder-text-muted focus:outline-none focus:border-secondary font-body"
             />
             <button
               type="submit"

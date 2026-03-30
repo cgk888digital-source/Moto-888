@@ -22,7 +22,7 @@ export function PostForm() {
         placeholder="¿Qué está pasando en tu rodada? Comparte con la comunidad..."
         rows={3}
         required
-        className="w-full bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text-base placeholder-text-muted resize-none focus:outline-none focus:border-accent font-body"
+        className="w-full bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text-base placeholder-text-muted resize-none focus:outline-none focus:border-secondary font-body"
       />
       <div className="flex justify-end">
         <button
