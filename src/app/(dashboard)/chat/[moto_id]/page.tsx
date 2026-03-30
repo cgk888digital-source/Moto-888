@@ -43,7 +43,7 @@ export default async function ChatPage({ params }: Props) {
         <Link href="/checkout" className="btn-primary px-8 py-3">
           Actualizar a Pro — $9/mes
         </Link>
-        <Link href="/dashboard" className="mt-4 text-xs text-text-muted hover:text-accent font-body transition-colors">
+        <Link href="/dashboard" className="mt-4 text-xs text-text-muted hover:text-secondary font-body transition-colors">
           Volver al dashboard
         </Link>
       </div>
@@ -56,7 +56,7 @@ export default async function ChatPage({ params }: Props) {
       <div className="px-4 pt-4 pb-2 shrink-0">
         <Link
           href="/dashboard"
-          className="inline-flex items-center gap-1.5 text-xs text-text-muted hover:text-accent transition-colors font-body uppercase tracking-wider"
+          className="inline-flex items-center gap-1.5 text-xs text-text-muted hover:text-secondary transition-colors font-body uppercase tracking-wider"
         >
           ← Dashboard
         </Link>

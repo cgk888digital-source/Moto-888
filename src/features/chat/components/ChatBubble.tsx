@@ -12,7 +12,7 @@ export function ChatBubble({ message }: Props) {
     <div className={`flex ${isUser ? 'justify-end' : 'justify-start'} gap-2`}>
       {/* Avatar IA */}
       {!isUser && (
-        <div className="shrink-0 w-8 h-8 rounded-full bg-accent/20 border border-accent/40 flex items-center justify-center text-sm mt-1">
+        <div className="shrink-0 w-8 h-8 rounded-full bg-secondary-muted border border-secondary/40 flex items-center justify-center text-sm mt-1">
           ⚡
         </div>
       )}

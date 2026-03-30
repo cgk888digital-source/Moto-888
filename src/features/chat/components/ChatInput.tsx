@@ -48,7 +48,7 @@ export function ChatInput({ onSend, disabled }: Props) {
         placeholder="Describe el problema de tu moto..."
         disabled={disabled}
         rows={1}
-        className="flex-1 bg-surface-2 border border-border rounded-xl px-4 py-3 text-sm font-body text-text-base placeholder:text-text-muted focus:outline-none focus:border-accent resize-none transition-colors disabled:opacity-50"
+        className="flex-1 bg-surface-2 border border-border rounded-xl px-4 py-3 text-sm font-body text-text-base placeholder:text-text-muted focus:outline-none focus:border-secondary resize-none transition-colors disabled:opacity-50"
         style={{ minHeight: '48px' }}
       />
       <button
