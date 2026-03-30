@@ -21,21 +21,21 @@ const ORDEN_ESTADO: Record<EstadoSalud, number> = {
 const BADGE: Record<EstadoSalud, { label: string; cls: string }> = {
   vencido:    { label: 'VENCIDO',      cls: 'bg-red-500/20 text-red-400 border border-red-700/40' },
   proximo:    { label: 'PRÓXIMO',      cls: 'bg-amber-500/20 text-amber-400 border border-amber-700/40' },
-  ok:         { label: 'SALUD OK',     cls: 'bg-teal-500/20 text-teal-400 border border-teal-700/40' },
+  ok:         { label: 'SALUD OK',     cls: 'bg-secondary-muted text-secondary border border-secondary/30' },
   'sin-datos':{ label: 'SIN REGISTRO', cls: 'bg-zinc-700/40 text-zinc-400 border border-zinc-600/40' },
 }
 
 const CARD_BORDER: Record<EstadoSalud, string> = {
   vencido:     'border-red-700/50',
   proximo:     'border-amber-700/50',
-  ok:          'border-border',
+  ok:          'border-secondary/20',
   'sin-datos': 'border-border',
 }
 
 const ICON_BG: Record<EstadoSalud, string> = {
   vencido:     'bg-red-500/10',
   proximo:     'bg-amber-500/10',
-  ok:          'bg-teal-500/10',
+  ok:          'bg-secondary-muted',
   'sin-datos': 'bg-zinc-700/30',
 }
 
@@ -83,7 +83,7 @@ export function SaludGridClient({ motoId, componentes, vencidos, proximos }: Pro
           </span>
         )}
         {vencidos === 0 && proximos === 0 && (
-          <span className="text-xs font-medium text-teal-400 bg-teal-500/10 px-2 py-0.5 rounded-full border border-teal-700/30">
+          <span className="text-xs font-medium text-secondary bg-secondary-muted px-2 py-0.5 rounded-full border border-secondary/30">
             Todo al día
           </span>
         )}
