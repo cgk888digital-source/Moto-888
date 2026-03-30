@@ -1,4 +1,4 @@
-const CACHE_NAME = 'bikevzla-v3'
+const CACHE_NAME = 'bikevzla-v4'
 const OFFLINE_URL = '/offline'
 
 // Assets a cachear inmediatamente (cache-first)

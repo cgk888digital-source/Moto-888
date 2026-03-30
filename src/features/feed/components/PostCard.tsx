@@ -81,16 +81,19 @@ export function PostCard({ post }: { post: Post }) {
     })
   }
 
+  const isRuta = post.tipo === 'ruta'
+
   return (
-    <article className="bg-surface border border-border rounded-xl p-4 space-y-3">
+    <article className={`bg-surface border rounded-xl p-4 space-y-3 ${isRuta ? 'border-secondary/40' : 'border-border'}`}>
+      {isRuta && <div className="absolute left-0 top-0 h-full w-0.5 bg-secondary rounded-l-xl" />}
       {/* Header */}
       <div className="flex items-start justify-between gap-2">
         <div className="flex items-center gap-2">
-          <div className="w-9 h-9 rounded-full bg-secondary-muted flex items-center justify-center text-secondary font-display font-bold text-sm">
+          <div className="w-9 h-9 rounded-full bg-secondary-muted flex items-center justify-center text-secondary font-display font-bold text-sm border border-secondary/20">
             {(post.autor?.nombre ?? post.autor?.email ?? '?')[0].toUpperCase()}
           </div>
           <div>
-            <p className="text-sm font-semibold text-text-base font-body">
+            <p className="text-sm font-semibold text-secondary font-body">
               {post.autor?.nombre ?? post.autor?.email}
             </p>
             <p className="text-xs text-text-muted font-body">{timeAgo(post.created_at)}</p>

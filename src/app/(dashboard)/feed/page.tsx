@@ -13,9 +13,12 @@ export default async function FeedPage() {
 
   return (
     <div className="max-w-2xl mx-auto space-y-4">
-      <h1 className="font-display text-2xl font-bold text-text-base tracking-wide uppercase">
-        Feed <span className="text-accent">Comunidad</span>
-      </h1>
+      <div className="flex items-center gap-3">
+        <div className="h-7 w-1 rounded-full bg-secondary" />
+        <h1 className="font-display text-2xl font-bold text-text-base tracking-wide uppercase">
+          Feed <span className="text-secondary">Comunidad</span>
+        </h1>
+      </div>
 
       <PostForm />
 
