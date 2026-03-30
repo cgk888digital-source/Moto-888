@@ -31,7 +31,7 @@ export default async function EditarEventoPage({ params }: { params: Promise<{ i
           </h1>
           <Link
             href={`/eventos/${id}`}
-            className="text-sm text-text-muted hover:text-accent font-body transition-colors"
+            className="text-sm text-text-muted hover:text-secondary font-body transition-colors"
           >
             Cancelar
           </Link>
@@ -44,7 +44,7 @@ export default async function EditarEventoPage({ params }: { params: Promise<{ i
               name="titulo"
               defaultValue={evento.titulo}
               required
-              className="w-full bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text-base focus:outline-none focus:border-accent font-body"
+              className="w-full bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text-base focus:outline-none focus:border-secondary font-body"
             />
           </div>
 
@@ -54,7 +54,7 @@ export default async function EditarEventoPage({ params }: { params: Promise<{ i
               name="descripcion"
               defaultValue={evento.descripcion ?? ''}
               rows={3}
-              className="w-full bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text-base resize-none focus:outline-none focus:border-accent font-body"
+              className="w-full bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text-base resize-none focus:outline-none focus:border-secondary font-body"
             />
           </div>
 
@@ -66,7 +66,7 @@ export default async function EditarEventoPage({ params }: { params: Promise<{ i
                 name="fecha_hora"
                 defaultValue={fechaLocal}
                 required
-                className="w-full bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text-base focus:outline-none focus:border-accent font-body"
+                className="w-full bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text-base focus:outline-none focus:border-secondary font-body"
               />
             </div>
             <div className="space-y-1">
@@ -77,7 +77,7 @@ export default async function EditarEventoPage({ params }: { params: Promise<{ i
                 defaultValue={evento.cupos_max ?? ''}
                 placeholder="Sin límite"
                 min={2}
-                className="w-full bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text-base placeholder-text-muted focus:outline-none focus:border-accent font-body"
+                className="w-full bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text-base placeholder-text-muted focus:outline-none focus:border-secondary font-body"
               />
             </div>
           </div>
@@ -88,7 +88,7 @@ export default async function EditarEventoPage({ params }: { params: Promise<{ i
               name="punto_partida"
               defaultValue={evento.punto_partida ?? ''}
               placeholder="Dirección o referencia"
-              className="w-full bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text-base placeholder-text-muted focus:outline-none focus:border-accent font-body"
+              className="w-full bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text-base placeholder-text-muted focus:outline-none focus:border-secondary font-body"
             />
           </div>
 

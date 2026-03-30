@@ -14,13 +14,16 @@ export default async function RoadGuardianPage() {
 
   return (
     <div className="max-w-2xl mx-auto space-y-6">
-      <div>
-        <h1 className="font-display text-2xl font-bold text-text-base tracking-wide uppercase">
-          Road<span className="text-accent">Guardian</span>
-        </h1>
-        <p className="text-sm text-text-muted font-body mt-1">
-          Detección de caída automática. Si caés, tus contactos de emergencia reciben tu ubicación GPS.
-        </p>
+      <div className="flex items-start gap-3">
+        <div className="h-7 w-1 rounded-full bg-secondary mt-1" />
+        <div>
+          <h1 className="font-display text-2xl font-bold text-text-base tracking-wide uppercase">
+            Road<span className="text-secondary">Guardian</span>
+          </h1>
+          <p className="text-sm text-text-muted font-body mt-1">
+            Detección de caída automática. Si caés, tus contactos de emergencia reciben tu ubicación GPS.
+          </p>
+        </div>
       </div>
       <RoadGuardianClient contactos={contactos ?? []} alertas={alertas ?? []} userId={user.id} />
     </div>

@@ -20,9 +20,12 @@ export default async function RutasPage() {
     <div className="animate-fade-in space-y-6">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <div>
-          <h1 className="font-display text-3xl font-bold text-text-base uppercase tracking-wide">Rutas</h1>
-          <p className="text-text-muted text-sm font-body mt-1">Descubre y comparte rutas de la comunidad</p>
+        <div className="flex items-center gap-3">
+          <div className="h-7 w-1 rounded-full bg-secondary" />
+          <div>
+            <h1 className="font-display text-3xl font-bold text-text-base uppercase tracking-wide">Ru<span className="text-secondary">tas</span></h1>
+            <p className="text-text-muted text-sm font-body mt-1">Descubre y comparte rutas de la comunidad</p>
+          </div>
         </div>
         <div className="flex gap-2">
           <Link href="/rutas/grabar" className="btn-primary text-sm px-4 py-2">
@@ -45,9 +48,9 @@ export default async function RutasPage() {
         <div className="grid gap-4 sm:grid-cols-2">
           {rutas.map(ruta => (
             <Link key={ruta.id} href={`/rutas/${ruta.id}`}
-              className="bg-surface border border-border rounded-xl p-5 hover:border-accent transition-colors group">
+              className="bg-surface border border-border rounded-xl p-5 hover:border-secondary transition-colors group">
               <div className="flex items-start justify-between mb-3">
-                <h3 className="font-display font-bold text-text-base text-lg uppercase tracking-wide group-hover:text-accent transition-colors line-clamp-1">
+                <h3 className="font-display font-bold text-text-base text-lg uppercase tracking-wide group-hover:text-secondary transition-colors line-clamp-1">
                   {ruta.titulo}
                 </h3>
                 {ruta.dificultad && (

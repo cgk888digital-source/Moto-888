@@ -19,17 +19,17 @@ export function EventoCard({ evento }: EventoCardProps) {
   const hora = fecha.toLocaleTimeString('es-VE', { hour: '2-digit', minute: '2-digit' })
 
   return (
-    <Link href={`/eventos/${evento.id}`} className="block bg-surface border border-border rounded-xl p-4 hover:border-accent transition-colors group">
+    <Link href={`/eventos/${evento.id}`} className="block bg-surface border border-border rounded-xl p-4 hover:border-secondary transition-colors group">
       <div className="flex gap-4">
         {/* Fecha badge */}
-        <div className="flex-shrink-0 w-14 bg-accent/10 rounded-lg flex flex-col items-center justify-center py-2 text-center">
+        <div className="flex-shrink-0 w-14 bg-secondary-muted rounded-lg flex flex-col items-center justify-center py-2 text-center">
           <span className="text-xs text-text-muted font-body uppercase">{dia.split(' ')[0]}</span>
-          <span className="text-xl font-display font-bold text-accent leading-none">{dia.split(' ')[1]}</span>
+          <span className="text-xl font-display font-bold text-secondary leading-none">{dia.split(' ')[1]}</span>
           <span className="text-xs text-text-muted font-body">{dia.split(' ').slice(2).join(' ')}</span>
         </div>
 
         <div className="flex-1 min-w-0">
-          <h3 className="font-display font-bold text-text-base group-hover:text-accent transition-colors truncate">
+          <h3 className="font-display font-bold text-text-base group-hover:text-secondary transition-colors truncate">
             {evento.titulo}
           </h3>
           {evento.descripcion && (
@@ -40,7 +40,7 @@ export function EventoCard({ evento }: EventoCardProps) {
             {evento.punto_partida && (
               <span className="text-xs text-text-muted font-body">📍 {evento.punto_partida}</span>
             )}
-            <span className="text-xs text-accent font-body font-semibold">
+            <span className="text-xs text-secondary font-body font-semibold">
               ✅ {evento.voy_count} van
               {evento.cupos_max ? ` / ${evento.cupos_max} cupos` : ''}
             </span>

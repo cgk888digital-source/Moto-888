@@ -32,7 +32,7 @@ export default async function EventoPage({ params }: { params: Promise<{ id: str
       {/* Header */}
       <div className="bg-surface border border-border rounded-xl p-6 space-y-4">
         <div className="flex items-start gap-4">
-          <div className="w-16 h-16 rounded-xl bg-accent/10 flex items-center justify-center text-3xl flex-shrink-0">
+          <div className="w-16 h-16 rounded-xl bg-secondary-muted flex items-center justify-center text-3xl flex-shrink-0">
             🏍️
           </div>
           <div className="flex-1 min-w-0">
@@ -43,7 +43,7 @@ export default async function EventoPage({ params }: { params: Promise<{ id: str
               {esCreador && (
                 <Link
                   href={`/eventos/${id}/editar`}
-                  className="ml-auto p-1.5 rounded-lg text-text-muted hover:text-accent hover:bg-accent/10 transition-colors"
+                  className="ml-auto p-1.5 rounded-lg text-text-muted hover:text-secondary hover:bg-secondary-muted transition-colors"
                   title="Editar evento"
                 >
                   ✏️
@@ -100,7 +100,7 @@ export default async function EventoPage({ params }: { params: Promise<{ id: str
           <a
             href={evento.ruta_gpx_url}
             download
-            className="flex items-center gap-2 text-sm text-accent hover:underline font-body"
+            className="flex items-center gap-2 text-sm text-secondary hover:underline font-body"
           >
             🗺️ Descargar ruta GPX
           </a>
@@ -113,7 +113,7 @@ export default async function EventoPage({ params }: { params: Promise<{ id: str
           </div>
         )}
         {esCreador && (
-          <p className="text-center text-xs text-accent font-body pt-2 border-t border-border">
+          <p className="text-center text-xs text-secondary font-body pt-2 border-t border-border">
             ⭐ Tú organizas este evento
           </p>
         )}
@@ -121,7 +121,7 @@ export default async function EventoPage({ params }: { params: Promise<{ id: str
 
       <Link
         href="/eventos"
-        className="text-sm text-text-muted hover:text-accent font-body transition-colors inline-block"
+        className="text-sm text-text-muted hover:text-secondary font-body transition-colors inline-block"
       >
         ← Volver a eventos
       </Link>

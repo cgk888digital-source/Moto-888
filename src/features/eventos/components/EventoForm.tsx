@@ -23,13 +23,13 @@ export function EventoForm() {
           name="titulo"
           placeholder="Nombre de la rodada *"
           required
-          className="w-full bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text-base placeholder-text-muted focus:outline-none focus:border-accent font-body"
+          className="w-full bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text-base placeholder-text-muted focus:outline-none focus:border-secondary font-body"
         />
         <textarea
           name="descripcion"
           placeholder="Descripción, detalles, recomendaciones..."
           rows={2}
-          className="w-full bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text-base placeholder-text-muted resize-none focus:outline-none focus:border-accent font-body"
+          className="w-full bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text-base placeholder-text-muted resize-none focus:outline-none focus:border-secondary font-body"
         />
         <div className="grid grid-cols-2 gap-3">
           <div className="space-y-1">
@@ -39,7 +39,7 @@ export function EventoForm() {
               name="fecha_hora"
               min={minDate}
               required
-              className="w-full bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text-base focus:outline-none focus:border-accent font-body"
+              className="w-full bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text-base focus:outline-none focus:border-secondary font-body"
             />
           </div>
           <div className="space-y-1">
@@ -49,14 +49,14 @@ export function EventoForm() {
               name="cupos_max"
               placeholder="Sin límite"
               min={2}
-              className="w-full bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text-base placeholder-text-muted focus:outline-none focus:border-accent font-body"
+              className="w-full bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text-base placeholder-text-muted focus:outline-none focus:border-secondary font-body"
             />
           </div>
         </div>
         <input
           name="punto_partida"
           placeholder="Punto de partida (dirección o referencia)"
-          className="w-full bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text-base placeholder-text-muted focus:outline-none focus:border-accent font-body"
+          className="w-full bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text-base placeholder-text-muted focus:outline-none focus:border-secondary font-body"
         />
       </div>
 

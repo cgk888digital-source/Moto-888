@@ -13,9 +13,12 @@ export default async function EventosPage() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
-      <h1 className="font-display text-2xl font-bold text-text-base tracking-wide uppercase">
-        Rodadas <span className="text-accent">& Eventos</span>
-      </h1>
+      <div className="flex items-center gap-3">
+        <div className="h-7 w-1 rounded-full bg-secondary" />
+        <h1 className="font-display text-2xl font-bold text-text-base tracking-wide uppercase">
+          Rodadas <span className="text-secondary">& Eventos</span>
+        </h1>
+      </div>
 
       <div className="grid md:grid-cols-3 gap-6">
         <div>

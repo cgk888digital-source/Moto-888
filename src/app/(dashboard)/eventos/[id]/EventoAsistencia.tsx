@@ -38,7 +38,7 @@ export function EventoAsistencia({ eventoId, anterior }: Props) {
               className={`flex-1 py-2.5 rounded-lg text-sm font-body font-semibold transition-colors border ${
                 activo
                   ? 'bg-accent text-bg border-accent'
-                  : 'bg-transparent border-border text-text-muted hover:border-accent hover:text-accent'
+                  : 'bg-transparent border-border text-text-muted hover:border-secondary hover:text-secondary'
               } ${pending ? 'opacity-50 cursor-not-allowed' : ''}`}
             >
               {icon} {label}
@@ -48,11 +48,11 @@ export function EventoAsistencia({ eventoId, anterior }: Props) {
       </div>
       {anterior && (
         <p className="text-xs text-text-muted font-body text-center">
-          Tu respuesta: <span className="text-accent">{OPCIONES.find(o => o.value === anterior)?.label}</span>
+          Tu respuesta: <span className="text-secondary">{OPCIONES.find(o => o.value === anterior)?.label}</span>
           {' · '}
           <button
             onClick={() => handleClick(anterior as Respuesta)}
-            className="underline hover:text-accent transition-colors"
+            className="underline hover:text-secondary transition-colors"
           >
             Cancelar
           </button>

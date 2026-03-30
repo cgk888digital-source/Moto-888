@@ -165,7 +165,7 @@ export function GrabarRutaClient({ rutaId, userId }: Props) {
         <h2 className="font-display text-2xl font-bold text-text-base uppercase tracking-wide mb-3">¡Ruta guardada!</h2>
         <div className="grid grid-cols-2 gap-3 max-w-xs mx-auto mb-8 text-center">
           <div className="bg-surface border border-border rounded-xl p-3">
-            <p className="font-display text-xl font-bold text-accent">{distancia.toFixed(1)}</p>
+            <p className="font-display text-xl font-bold text-secondary">{distancia.toFixed(1)}</p>
             <p className="text-xs text-text-muted font-body">km</p>
           </div>
           <div className="bg-surface border border-border rounded-xl p-3">
@@ -193,7 +193,7 @@ export function GrabarRutaClient({ rutaId, userId }: Props) {
   return (
     <div className="space-y-6 max-w-md mx-auto">
       <div>
-        <Link href={rutaId ? `/rutas/${rutaId}` : '/rutas'} className="inline-flex items-center gap-1.5 text-xs text-text-muted hover:text-accent transition-colors font-body uppercase tracking-wider mb-4">
+        <Link href={rutaId ? `/rutas/${rutaId}` : '/rutas'} className="inline-flex items-center gap-1.5 text-xs text-text-muted hover:text-secondary transition-colors font-body uppercase tracking-wider mb-4">
           ← {rutaId ? 'Ruta' : 'Rutas'}
         </Link>
         <h1 className="font-display text-3xl font-bold text-text-base uppercase tracking-wide">Grabar telemetría</h1>
@@ -215,7 +215,7 @@ export function GrabarRutaClient({ rutaId, userId }: Props) {
           <div className="grid grid-cols-2 gap-3 mb-6 text-left">
             <div className="bg-bg border border-border rounded-xl p-3">
               <p className="text-xs text-text-muted font-body uppercase tracking-wide">Velocidad</p>
-              <p className="font-display text-2xl font-bold text-accent">{velocidadActual} <span className="text-sm text-text-muted">km/h</span></p>
+              <p className="font-display text-2xl font-bold text-secondary">{velocidadActual} <span className="text-sm text-text-muted">km/h</span></p>
             </div>
             <div className="bg-bg border border-border rounded-xl p-3">
               <p className="text-xs text-text-muted font-body uppercase tracking-wide">Vel. Max</p>

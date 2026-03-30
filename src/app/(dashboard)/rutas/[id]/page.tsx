@@ -43,7 +43,7 @@ export default async function RutaDetailPage({ params }: { params: Promise<{ id:
   return (
     <div className="animate-fade-in space-y-6 max-w-2xl mx-auto">
       {/* Back */}
-      <Link href="/rutas" className="inline-flex items-center gap-1.5 text-xs text-text-muted hover:text-accent transition-colors font-body uppercase tracking-wider">
+      <Link href="/rutas" className="inline-flex items-center gap-1.5 text-xs text-text-muted hover:text-secondary transition-colors font-body uppercase tracking-wider">
         ← Rutas
       </Link>
 
@@ -54,7 +54,7 @@ export default async function RutaDetailPage({ params }: { params: Promise<{ id:
             {ruta.titulo}
           </h1>
           {esMia && (
-            <Link href={`/rutas/${id}/editar`} className="text-text-muted hover:text-accent transition-colors text-lg shrink-0" title="Editar ruta">
+            <Link href={`/rutas/${id}/editar`} className="text-text-muted hover:text-secondary transition-colors text-lg shrink-0" title="Editar ruta">
               ✏️
             </Link>
           )}
@@ -82,7 +82,7 @@ export default async function RutaDetailPage({ params }: { params: Promise<{ id:
         {/* Stats */}
         <div className="grid grid-cols-3 gap-3 mb-4">
           <div className="bg-bg border border-border rounded-lg px-3 py-3 text-center">
-            <p className="font-display text-lg font-bold text-accent">{ruta.distancia_km ?? '—'}</p>
+            <p className="font-display text-lg font-bold text-secondary">{ruta.distancia_km ?? '—'}</p>
             <p className="text-xs text-text-muted font-body">km</p>
           </div>
           <div className="bg-bg border border-border rounded-lg px-3 py-3 text-center">
@@ -100,7 +100,7 @@ export default async function RutaDetailPage({ params }: { params: Promise<{ id:
         )}
 
         {ruta.gpx_url && (
-          <a href={ruta.gpx_url} download className="mt-4 inline-flex items-center gap-2 text-xs text-accent hover:underline font-body">
+          <a href={ruta.gpx_url} download className="mt-4 inline-flex items-center gap-2 text-xs text-secondary hover:underline font-body">
             ⬇️ Descargar GPX
           </a>
         )}
@@ -125,7 +125,7 @@ export default async function RutaDetailPage({ params }: { params: Promise<{ id:
           {telemetria.map(t => (
             <div key={t.id} className="bg-bg border border-border rounded-xl p-4 grid grid-cols-2 sm:grid-cols-4 gap-3">
               <div className="text-center">
-                <p className="font-display text-xl font-bold text-accent">{t.distancia_km?.toFixed(1) ?? '—'}</p>
+                <p className="font-display text-xl font-bold text-secondary">{t.distancia_km?.toFixed(1) ?? '—'}</p>
                 <p className="text-xs text-text-muted font-body">km</p>
               </div>
               <div className="text-center">
@@ -157,7 +157,7 @@ export default async function RutaDetailPage({ params }: { params: Promise<{ id:
           <div className="space-y-3">
             {comentarios.map(c => (
               <div key={c.id} className="flex gap-3">
-                <div className="w-7 h-7 rounded-full bg-accent/20 flex items-center justify-center text-accent font-bold text-xs shrink-0 font-display">
+                <div className="w-7 h-7 rounded-full bg-secondary-muted flex items-center justify-center text-secondary font-bold text-xs shrink-0 font-display">
                   {c.user_id.slice(0, 2).toUpperCase()}
                 </div>
                 <div className="flex-1 bg-bg border border-border rounded-lg px-3 py-2">
@@ -173,7 +173,7 @@ export default async function RutaDetailPage({ params }: { params: Promise<{ id:
 
         <form action={handleComentario} className="flex gap-2 mt-2">
           <input name="contenido" required placeholder="Escribe un comentario..."
-            className="flex-1 bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text-base placeholder-text-muted focus:outline-none focus:border-accent font-body" />
+            className="flex-1 bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text-base placeholder-text-muted focus:outline-none focus:border-secondary font-body" />
           <button type="submit" className="btn-primary text-sm px-4 py-2 shrink-0">Enviar</button>
         </form>
       </div>

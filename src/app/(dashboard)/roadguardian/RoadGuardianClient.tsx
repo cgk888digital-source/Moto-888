@@ -176,7 +176,7 @@ export function RoadGuardianClient({ contactos: init, alertas, userId }: Props) 
             </button>
             {/* Botón de prueba en desarrollo */}
             {activo && (
-              <button onClick={triggerCaida} className="block text-xs text-text-muted hover:text-accent font-body mx-auto mt-1 transition-colors">
+              <button onClick={triggerCaida} className="block text-xs text-text-muted hover:text-secondary font-body mx-auto mt-1 transition-colors">
                 Simular caída (dev)
               </button>
             )}
@@ -193,7 +193,7 @@ export function RoadGuardianClient({ contactos: init, alertas, userId }: Props) 
 
         {contactos.map(c => (
           <div key={c.id} className="flex items-center gap-3 bg-bg border border-border rounded-lg p-3">
-            <div className="w-8 h-8 rounded-full bg-accent/20 flex items-center justify-center text-accent font-bold text-sm font-display">
+            <div className="w-8 h-8 rounded-full bg-secondary-muted flex items-center justify-center text-secondary font-bold text-sm font-display">
               {c.orden}
             </div>
             <div className="flex-1">
@@ -207,7 +207,7 @@ export function RoadGuardianClient({ contactos: init, alertas, userId }: Props) 
         {contactos.length < 3 && !showForm && (
           <button
             onClick={() => setShowForm(true)}
-            className="w-full text-sm border border-dashed border-border text-text-muted hover:border-accent hover:text-accent rounded-lg py-3 font-body transition-colors"
+            className="w-full text-sm border border-dashed border-border text-text-muted hover:border-secondary hover:text-secondary rounded-lg py-3 font-body transition-colors"
           >
             + Agregar contacto
           </button>
@@ -216,11 +216,11 @@ export function RoadGuardianClient({ contactos: init, alertas, userId }: Props) 
         {showForm && (
           <form onSubmit={addContacto} className="space-y-3">
             <input name="nombre" placeholder="Nombre *" required
-              className="w-full bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text-base placeholder-text-muted focus:outline-none focus:border-accent font-body" />
+              className="w-full bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text-base placeholder-text-muted focus:outline-none focus:border-secondary font-body" />
             <input name="telefono" placeholder="Teléfono (con código país) *" required
-              className="w-full bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text-base placeholder-text-muted focus:outline-none focus:border-accent font-body" />
+              className="w-full bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text-base placeholder-text-muted focus:outline-none focus:border-secondary font-body" />
             <input name="relacion" placeholder="Relación (mamá, amigo, pareja...)"
-              className="w-full bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text-base placeholder-text-muted focus:outline-none focus:border-accent font-body" />
+              className="w-full bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text-base placeholder-text-muted focus:outline-none focus:border-secondary font-body" />
             <button type="submit" disabled={pending}
               className="w-full bg-accent text-bg py-2 rounded-lg text-sm font-body font-semibold hover:bg-amber-400 transition-colors disabled:opacity-50">
               {pending ? 'Guardando...' : 'Guardar contacto'}
@@ -245,7 +245,7 @@ export function RoadGuardianClient({ contactos: init, alertas, userId }: Props) 
               </div>
               {a.google_maps_url && (
                 <a href={a.google_maps_url} target="_blank" rel="noopener noreferrer"
-                  className="text-xs text-accent hover:underline font-body">Ver mapa</a>
+                  className="text-xs text-secondary hover:underline font-body">Ver mapa</a>
               )}
             </div>
           ))}

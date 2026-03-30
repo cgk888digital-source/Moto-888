@@ -106,7 +106,7 @@ export function GrupoChat({ grupoId, userId, esMiembro, grupoNombre }: Props) {
             return (
               <div key={m.id} className={`flex ${isOwn ? 'justify-end' : 'justify-start'}`}>
                 <div className={`max-w-[85%] space-y-0.5`}>
-                   {!isOwn && <p className="text-[10px] text-accent font-bold ml-2">{nombre}</p>}
+                   {!isOwn && <p className="text-[10px] text-secondary font-bold ml-2">{nombre}</p>}
                    <div className={`px-3 py-2 rounded-2xl text-sm font-body shadow-sm ${
                      isOwn 
                       ? 'bg-accent text-bg rounded-tr-none' 
@@ -131,7 +131,7 @@ export function GrupoChat({ grupoId, userId, esMiembro, grupoNombre }: Props) {
           value={texto}
           onChange={e => setTexto(e.target.value)}
           placeholder="Escribe a la comunidad..."
-          className="flex-1 bg-bg border border-border rounded-xl px-4 py-2 text-sm text-text-base focus:border-accent outline-none font-body"
+          className="flex-1 bg-bg border border-border rounded-xl px-4 py-2 text-sm text-text-base focus:border-secondary outline-none font-body"
         />
         <button 
           disabled={isPending || !texto.trim()}

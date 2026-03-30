@@ -16,9 +16,12 @@ export default async function GruposPage() {
 
   return (
     <div className="max-w-4xl mx-auto space-y-6">
-      <h1 className="font-display text-2xl font-bold text-text-base tracking-wide uppercase">
-        Grupos <span className="text-accent">Riders</span>
-      </h1>
+      <div className="flex items-center gap-3">
+        <div className="h-7 w-1 rounded-full bg-secondary" />
+        <h1 className="font-display text-2xl font-bold text-text-base tracking-wide uppercase">
+          Grupos <span className="text-secondary">Riders</span>
+        </h1>
+      </div>
 
       <div className="grid md:grid-cols-3 gap-6">
         {/* Sidebar — mis grupos + crear */}
@@ -31,7 +34,7 @@ export default async function GruposPage() {
               <ul className="space-y-2">
                 {misGrupos.map((g: any) => (
                   <li key={g.id}>
-                    <a href={`/grupos/${g.id}`} className="text-sm text-text-base hover:text-accent font-body transition-colors">
+                    <a href={`/grupos/${g.id}`} className="text-sm text-text-base hover:text-secondary font-body transition-colors">
                       {g.nombre}
                     </a>
                   </li>

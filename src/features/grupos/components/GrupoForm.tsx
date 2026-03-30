@@ -22,25 +22,25 @@ export function GrupoForm() {
           name="nombre"
           placeholder="Nombre del grupo *"
           required
-          className="w-full bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text-base placeholder-text-muted focus:outline-none focus:border-accent font-body"
+          className="w-full bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text-base placeholder-text-muted focus:outline-none focus:border-secondary font-body"
         />
         <textarea
           name="descripcion"
           placeholder="Descripción (opcional)"
           rows={2}
-          className="w-full bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text-base placeholder-text-muted resize-none focus:outline-none focus:border-accent font-body"
+          className="w-full bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text-base placeholder-text-muted resize-none focus:outline-none focus:border-secondary font-body"
         />
         <div className="grid grid-cols-2 gap-3">
           <select
             name="tipo"
-            className="bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text-base focus:outline-none focus:border-accent font-body"
+            className="bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text-base focus:outline-none focus:border-secondary font-body"
           >
             <option value="publico">Público</option>
             <option value="privado">Privado</option>
           </select>
           <select
             name="categoria"
-            className="bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text-base focus:outline-none focus:border-accent font-body"
+            className="bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text-base focus:outline-none focus:border-secondary font-body"
           >
             <option value="">Categoría</option>
             {CATEGORIAS.map(c => <option key={c} value={c}>{c}</option>)}

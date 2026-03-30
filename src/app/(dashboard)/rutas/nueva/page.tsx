@@ -11,7 +11,7 @@ export default async function NuevaRutaPage() {
   return (
     <div className="animate-fade-in max-w-lg mx-auto space-y-6">
       <div>
-        <Link href="/rutas" className="inline-flex items-center gap-1.5 text-xs text-text-muted hover:text-accent transition-colors font-body uppercase tracking-wider mb-4">
+        <Link href="/rutas" className="inline-flex items-center gap-1.5 text-xs text-text-muted hover:text-secondary transition-colors font-body uppercase tracking-wider mb-4">
           ← Rutas
         </Link>
         <h1 className="font-display text-3xl font-bold text-text-base uppercase tracking-wide">Nueva ruta</h1>

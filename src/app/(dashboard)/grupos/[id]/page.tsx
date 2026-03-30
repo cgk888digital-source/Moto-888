@@ -2,7 +2,7 @@ import { createClient } from '@/lib/supabase/server'
 import { redirect, notFound } from 'next/navigation'
 import Link from 'next/link'
 import { getGrupo, getMembership } from '@/features/grupos/queries'
-import { joinGroup, leaveGroup } from '@/features/grupos/actions'
+import { leaveGroup } from '@/features/grupos/actions'
 import { JoinGroupFlow } from './JoinGroupFlow'
 import { GrupoFotos } from './GrupoFotos'
 import { GrupoChat } from './GrupoChat'
@@ -49,7 +49,7 @@ export default async function GrupoPage({ params }: { params: Promise<{ id: stri
               {esAdmin && (
                 <Link
                   href={`/grupos/${id}/editar`}
-                  className="ml-auto p-2 rounded-lg bg-surface-2 text-text-muted hover:text-accent border border-border transition-all"
+                  className="ml-auto p-2 rounded-lg bg-surface-2 text-text-muted hover:text-secondary border border-border transition-all"
                   title="Ajustes de grupo"
                 >
                   ⚙️
@@ -64,7 +64,7 @@ export default async function GrupoPage({ params }: { params: Promise<{ id: stri
               </span>
             </div>
             {grupo.categoria && (
-              <span className="text-xs bg-accent/10 text-accent px-2 py-0.5 rounded-full font-body mt-2 inline-block">
+              <span className="text-xs bg-secondary-muted text-secondary px-2 py-0.5 rounded-full font-body mt-2 inline-block">
                 📂 {grupo.categoria}
               </span>
             )}
@@ -146,7 +146,7 @@ export default async function GrupoPage({ params }: { params: Promise<{ id: stri
 
       <Link
         href="/grupos"
-        className="text-sm text-text-muted hover:text-accent font-body transition-colors inline-block"
+        className="text-sm text-text-muted hover:text-secondary font-body transition-colors inline-block"
       >
         ← Volver a grupos
       </Link>

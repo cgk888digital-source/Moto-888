@@ -30,7 +30,7 @@ export default async function EditarGrupoPage({ params }: { params: Promise<{ id
           </h1>
           <Link
             href={`/grupos/${id}`}
-            className="text-sm text-text-muted hover:text-accent font-body transition-colors"
+            className="text-sm text-text-muted hover:text-secondary font-body transition-colors"
           >
             Cancelar
           </Link>
@@ -43,7 +43,7 @@ export default async function EditarGrupoPage({ params }: { params: Promise<{ id
               name="nombre"
               defaultValue={grupo.nombre}
               required
-              className="w-full bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text-base focus:outline-none focus:border-accent font-body"
+              className="w-full bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text-base focus:outline-none focus:border-secondary font-body"
             />
           </div>
 
@@ -53,7 +53,7 @@ export default async function EditarGrupoPage({ params }: { params: Promise<{ id
               name="descripcion"
               defaultValue={grupo.descripcion ?? ''}
               rows={3}
-              className="w-full bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text-base resize-none focus:outline-none focus:border-accent font-body"
+              className="w-full bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text-base resize-none focus:outline-none focus:border-secondary font-body"
             />
           </div>
 
@@ -63,7 +63,7 @@ export default async function EditarGrupoPage({ params }: { params: Promise<{ id
               <select
                 name="tipo"
                 defaultValue={grupo.tipo ?? undefined}
-                className="w-full bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text-base focus:outline-none focus:border-accent font-body"
+                className="w-full bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text-base focus:outline-none focus:border-secondary font-body"
               >
                 <option value="publico">Público</option>
                 <option value="privado">Privado</option>
@@ -74,7 +74,7 @@ export default async function EditarGrupoPage({ params }: { params: Promise<{ id
               <select
                 name="categoria"
                 defaultValue={grupo.categoria ?? undefined}
-                className="w-full bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text-base focus:outline-none focus:border-accent font-body"
+                className="w-full bg-bg border border-border rounded-lg px-3 py-2 text-sm text-text-base focus:outline-none focus:border-secondary font-body"
               >
                 <option value="">Sin categoría</option>
                 {CATEGORIAS.map(c => <option key={c} value={c}>{c}</option>)}
