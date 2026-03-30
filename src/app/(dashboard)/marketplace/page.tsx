@@ -26,9 +26,12 @@ export default async function MarketplacePage({ searchParams }: Props) {
     <div className="space-y-5">
       {/* Header */}
       <div className="flex items-center justify-between gap-4 flex-wrap">
-        <h1 className="font-display text-2xl font-bold text-text-base tracking-wide uppercase">
-          Market<span className="text-accent">place</span>
-        </h1>
+        <div className="flex items-center gap-3">
+          <div className="h-7 w-1 rounded-full bg-secondary" />
+          <h1 className="font-display text-2xl font-bold text-text-base tracking-wide uppercase">
+            Market<span className="text-secondary">place</span>
+          </h1>
+        </div>
         <div className="flex gap-2">
           <Link href="/marketplace/mis-compras" className="btn-ghost text-xs px-3 py-2">
             Mis compras
@@ -38,7 +41,7 @@ export default async function MarketplacePage({ searchParams }: Props) {
               + Publicar producto
             </Link>
           ) : (
-            <Link href="/marketplace/vender" className="border border-accent text-accent px-4 py-2 rounded-lg text-sm font-body font-semibold hover:bg-accent/10 transition-colors">
+            <Link href="/marketplace/vender" className="border border-secondary text-secondary px-4 py-2 rounded-lg text-sm font-body font-semibold hover:bg-secondary-muted transition-colors">
               Vender en Bikevzla 888
             </Link>
           )}
@@ -52,13 +55,13 @@ export default async function MarketplacePage({ searchParams }: Props) {
             name="q"
             defaultValue={params.q}
             placeholder="Buscar repuestos, accesorios..."
-            className="flex-1 min-w-48 bg-surface border border-border rounded-lg px-3 py-2 text-sm text-text-base placeholder-text-muted focus:outline-none focus:border-accent font-body"
+            className="flex-1 min-w-48 bg-surface border border-border rounded-lg px-3 py-2 text-sm text-text-base placeholder-text-muted focus:outline-none focus:border-secondary font-body"
             aria-label="Buscar productos"
           />
           <select 
             name="categoria" 
             defaultValue={params.categoria ?? ''}
-            className="bg-surface border border-border rounded-lg px-3 py-2 text-sm text-text-base focus:outline-none focus:border-accent font-body"
+            className="bg-surface border border-border rounded-lg px-3 py-2 text-sm text-text-base focus:outline-none focus:border-secondary font-body"
             aria-label="Filtrar por categoría"
           >
             <option value="">Todas las categorías</option>
@@ -67,7 +70,7 @@ export default async function MarketplacePage({ searchParams }: Props) {
           <select 
             name="condicion" 
             defaultValue={params.condicion ?? ''}
-            className="bg-surface border border-border rounded-lg px-3 py-2 text-sm text-text-base focus:outline-none focus:border-accent font-body"
+            className="bg-surface border border-border rounded-lg px-3 py-2 text-sm text-text-base focus:outline-none focus:border-secondary font-body"
             aria-label="Filtrar por condición"
           >
             <option value="">Nuevo y Usado</option>
@@ -79,7 +82,7 @@ export default async function MarketplacePage({ searchParams }: Props) {
             Buscar
           </button>
           {(params.q || params.categoria || params.condicion) && (
-            <Link href="/marketplace" className="text-sm text-text-muted hover:text-accent font-body py-2 transition-colors">
+            <Link href="/marketplace" className="text-sm text-text-muted hover:text-secondary font-body py-2 transition-colors">
               Limpiar
             </Link>
           )}
@@ -121,7 +124,7 @@ export default async function MarketplacePage({ searchParams }: Props) {
                     ...(params.condicion && { condicion: params.condicion }),
                     page: String(page - 1),
                   })}`}
-                  className="px-3 py-2 bg-surface border border-border rounded-lg text-sm font-body hover:border-accent transition-colors"
+                  className="px-3 py-2 bg-surface border border-border rounded-lg text-sm font-body hover:border-secondary transition-colors"
                   aria-label="Página anterior"
                 >
                   ← Anterior
@@ -138,7 +141,7 @@ export default async function MarketplacePage({ searchParams }: Props) {
                     ...(params.condicion && { condicion: params.condicion }),
                     page: String(page + 1),
                   })}`}
-                  className="px-3 py-2 bg-surface border border-border rounded-lg text-sm font-body hover:border-accent transition-colors"
+                  className="px-3 py-2 bg-surface border border-border rounded-lg text-sm font-body hover:border-secondary transition-colors"
                   aria-label="Página siguiente"
                 >
                   Siguiente →

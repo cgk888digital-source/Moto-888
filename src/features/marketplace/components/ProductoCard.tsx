@@ -18,7 +18,7 @@ export const ProductoCard = memo(function ProductoCard({ producto }: Props) {
   return (
     <Link 
       href={`/marketplace/producto/${producto.id}`} 
-      className="block bg-surface border border-border rounded-xl overflow-hidden hover:border-accent transition-colors group"
+      className="block bg-surface border border-border rounded-xl overflow-hidden hover:border-secondary transition-colors group"
       aria-label={`Ver producto: ${producto.titulo}`}
     >
       <div className="h-40 bg-bg flex items-center justify-center overflow-hidden relative">
@@ -37,12 +37,12 @@ export const ProductoCard = memo(function ProductoCard({ producto }: Props) {
 
       <div className="p-3 space-y-2">
         <div className="flex items-start justify-between gap-2">
-          <h3 className="text-sm font-semibold text-text-base font-body line-clamp-2 group-hover:text-accent transition-colors">
+          <h3 className="text-sm font-semibold text-text-base font-body line-clamp-2 group-hover:text-secondary transition-colors">
             {producto.titulo}
           </h3>
           <span 
             className={`text-xs px-1.5 py-0.5 rounded font-body flex-shrink-0 ${
-              producto.condicion === 'nuevo' ? 'bg-green-900/40 text-green-400' : 'bg-surface border border-border text-text-muted'
+              producto.condicion === 'nuevo' ? 'bg-secondary-muted text-secondary border border-secondary/30' : 'bg-surface border border-border text-text-muted'
             }`}
             aria-label={`Condición: ${producto.condicion === 'nuevo' ? 'Nuevo' : 'Usado'}`}
           >
