@@ -119,7 +119,17 @@ export function ProductoDetailClient({ producto, mensajes: initMensajes, userId,
                 {producto.condicion === 'nuevo' ? 'Nuevo' : 'Usado'}
               </span>
             </div>
-            <h1 className="font-display text-2xl font-bold text-text-base">{producto.titulo}</h1>
+            <div className="flex items-center justify-between gap-4">
+              <h1 className="font-display text-2xl font-bold text-text-base">{producto.titulo}</h1>
+              {isOwnProduct && (
+                <Link 
+                  href={`/marketplace/producto/${producto.id}/editar`}
+                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-body border border-accent text-accent bg-accent/5 hover:bg-accent/10 transition-colors"
+                >
+                  ✏️ Editar producto
+                </Link>
+              )}
+            </div>
           </div>
 
           {/* Precio */}

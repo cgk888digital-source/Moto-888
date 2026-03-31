@@ -59,6 +59,47 @@ export async function createProducto(formData: FormData) {
   redirect(`/marketplace/producto/${data.id}`)
 }
 
+export async function updateProducto(id: string, formData: FormData) {
+  const supabase = await createClient()
+  const { data: { user } } = await supabase.auth.getUser()
+  if (!user) return { error: 'No autenticado' }
+
+  // Verificar propiedad
+  const existing = await supabase
+    .from('marketplace_productos')
+    .select('vendedor:marketplace_vendedores(user_id)')
+    .eq('id', id)
+    .single()
+
+  const vendedorUserId = (existing.data?.vendedor as any)?.user_id
+  if (vendedorUserId !== user.id) return { error: 'No tienes permiso para editar este producto' }
+
+  const fotosRaw = (formData.get('fotos') as string)?.trim()
+  const fotos = fotosRaw ? fotosRaw.split('\n').map(u => u.trim()).filter(Boolean) : null
+
+  const compatiblesRaw = (formData.get('motos_compatibles') as string)?.trim()
+  const motos_compatibles = compatiblesRaw
+    ? compatiblesRaw.split(',').map(m => m.trim()).filter(Boolean)
+    : null
+
+  const { error } = await supabase.from('marketplace_productos').update({
+    titulo: (formData.get('titulo') as string).trim(),
+    descripcion: (formData.get('descripcion') as string)?.trim() || null,
+    precio: Number(formData.get('precio')),
+    categoria: formData.get('categoria') as string,
+    condicion: formData.get('condicion') as string,
+    fotos,
+    motos_compatibles,
+    stock: Number(formData.get('stock') ?? 1),
+  }).eq('id', id)
+
+  if (error) return { error: error.message }
+  
+  revalidatePath('/marketplace')
+  revalidatePath(`/marketplace/producto/${id}`)
+  return { success: true }
+}
+
 export async function toggleGuardado(productoId: string, guardado: boolean) {
   const supabase = await createClient()
   const { data: { user } } = await supabase.auth.getUser()
