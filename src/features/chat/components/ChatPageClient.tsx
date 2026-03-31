@@ -59,11 +59,10 @@ export function ChatPageClient({ moto_id, motoNombre }: Props) {
       const data = await res.json()
 
       if (!res.ok) {
-        const errorDetail = data.detail ? `\nDetalle técnico: ${data.detail}` : ''
         setMessages(prev => [...prev, {
           id: crypto.randomUUID(),
           role: 'assistant',
-          content: `Error: ${data.error ?? 'No se pudo conectar'}${errorDetail}`,
+          content: `Error: ${data.error ?? 'No se pudo conectar'}`,
           timestamp: new Date(),
         }])
         return

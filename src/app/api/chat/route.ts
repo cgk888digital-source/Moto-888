@@ -234,17 +234,13 @@ export async function POST(req: NextRequest) {
     } catch (geminiErr: any) {
       console.error('[Chat API] Error en el modelo Gemini:', geminiErr)
       return NextResponse.json({ 
-        error: 'Error de conexión con la IA',
-        detail: geminiErr.message,
-        status: geminiErr.status || 500
+        error: 'Error de conexión con la IA' 
       }, { status: 500 })
     }
   } catch (err: any) {
-    console.error('[Chat API] Error maestro inesperado:', err)
+    console.error('[Chat API] Error inesperado:', err)
     return NextResponse.json({ 
-      error: 'Error interno del servidor',
-      detail: err.message,
-      stack: err.stack?.split('\n')[0] // Solo la primera línea para no ensuciar tanto
+      error: 'Error interno del servidor' 
     }, { status: 500 })
   }
 }
