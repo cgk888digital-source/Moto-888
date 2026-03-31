@@ -28,13 +28,15 @@ export async function middleware(request: NextRequest) {
 
   const path = request.nextUrl.pathname
   const isAuthRoute = path === '/login' || path === '/register'
+  // These pages must remain accessible even with an active session
+  const isPasswordRoute = path === '/forgot-password' || path === '/reset-password'
   const isProtectedRoute = path.startsWith('/dashboard') || path.startsWith('/onboarding')
 
   if (!user && isProtectedRoute) {
     return NextResponse.redirect(new URL('/login', request.url))
   }
 
-  if (user && isAuthRoute) {
+  if (user && isAuthRoute && !isPasswordRoute) {
     return NextResponse.redirect(new URL('/dashboard', request.url))
   }
 

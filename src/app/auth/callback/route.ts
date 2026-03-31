@@ -10,9 +10,10 @@ export async function GET(request: Request) {
     const supabase = await createClient()
     const { error } = await supabase.auth.exchangeCodeForSession(code)
     if (!error) {
-      // Enviar email de bienvenida de forma asíncrona para no retrasar el redirect
+      // Skip welcome email for password reset flow
+      const isPasswordReset = next === '/reset-password'
       const { data: { user } } = await supabase.auth.getUser()
-      if (user?.email) {
+      if (user?.email && !isPasswordReset) {
         // Importación dinámica para evitar problemas en el entorno de Edge si se usara
         const { sendEmail } = await import('@/lib/email')
         sendEmail({

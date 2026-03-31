@@ -44,9 +44,14 @@ export function LoginForm() {
         </div>
 
         <div>
-          <label className="block text-xs text-text-muted uppercase tracking-wider mb-2 font-body">
-            Contraseña
-          </label>
+          <div className="flex items-center justify-between mb-2">
+            <label className="block text-xs text-text-muted uppercase tracking-wider font-body">
+              Contraseña
+            </label>
+            <Link href="/forgot-password" className="text-xs text-secondary hover:text-secondary-hover transition-colors font-body">
+              ¿Olvidaste tu contraseña?
+            </Link>
+          </div>
           <input
             name="password"
             type="password"
