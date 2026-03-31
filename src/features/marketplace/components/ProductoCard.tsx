@@ -4,15 +4,12 @@ import { memo } from 'react'
 import Image from 'next/image'
 import Link from 'next/link'
 import type { Producto } from '../types'
-import { COMISION_POR_PRECIO } from '../types'
 
 interface Props {
   producto: Producto
 }
 
 export const ProductoCard = memo(function ProductoCard({ producto }: Props) {
-  const comision = COMISION_POR_PRECIO(producto.precio)
-  const totalComprador = (producto.precio * (1 + comision)).toFixed(2)
   const foto = producto.fotos?.[0]
 
   return (
@@ -52,7 +49,6 @@ export const ProductoCard = memo(function ProductoCard({ producto }: Props) {
 
         <div>
           <p className="text-lg font-display font-bold text-accent">${producto.precio}</p>
-          <p className="text-xs text-text-muted font-body">Comprás por ${totalComprador} ({(comision * 100).toFixed(1)}% com.)</p>
         </div>
 
         <div className="flex items-center justify-between">
