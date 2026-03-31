@@ -108,6 +108,7 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Datos inválidos', details: validation.errors }, { status: 400 })
     }
 
+    const { moto_id, messages } = validation.data
     console.log('[Chat API] Iniciando request para moto:', moto_id)
 
     const supabase = await createClient()
