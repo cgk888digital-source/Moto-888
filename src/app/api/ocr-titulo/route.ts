@@ -3,9 +3,7 @@ import { GoogleGenerativeAI } from '@google/generative-ai'
 import { createClient } from '@/lib/supabase/server'
 import { rateLimitMiddleware } from '@/lib/rate-limit'
 
-const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY ?? '')
-
-const OCR_PROMPT = `Analiza esta imagen de un título de propiedad venezolano de motocicleta.
+const OCR_PROMPT = `Analiza esta imagen de un documento o título de propiedad de motocicleta.
 Extrae exactamente los siguientes campos en formato JSON:
 {
   "marca": string,
@@ -19,7 +17,7 @@ Extrae exactamente los siguientes campos en formato JSON:
   "fecha_documento": string
 }
 Si algún campo no es legible o no aparece en la imagen, ponlo como null.
-Responde SOLO con el JSON, sin explicaciones adicionales.`
+Responde SOLO con el JSON, sin texto adicional.`
 
 export async function POST(req: NextRequest) {
   const rateLimit = rateLimitMiddleware(req, 'api/ocr-titulo')
@@ -39,10 +37,7 @@ export async function POST(req: NextRequest) {
     const file = formData.get('imagen') as File | null
     if (!file) return NextResponse.json({ error: 'No se recibió imagen' }, { status: 400 })
 
-    // Validar tipo y tamaño
-    if (!file.type.startsWith('image/')) {
-      return NextResponse.json({ error: 'El archivo debe ser una imagen' }, { status: 400 })
-    }
+    // Validar tamaño
     if (file.size > 10 * 1024 * 1024) {
       return NextResponse.json({ error: 'La imagen no puede superar 10MB' }, { status: 400 })
     }
@@ -51,10 +46,18 @@ export async function POST(req: NextRequest) {
     const bytes = await file.arrayBuffer()
     const base64 = Buffer.from(bytes).toString('base64')
 
-    const model = genAI.getGenerativeModel({ model: 'gemini-2.0-flash' })
+    // Normalizar mimeType — HEIC/HEIF de iPhone no es soportado, convertir a jpeg
+    let mimeType = file.type
+    if (!mimeType || mimeType === 'application/octet-stream' || mimeType.includes('heic') || mimeType.includes('heif')) {
+      mimeType = 'image/jpeg'
+    }
+
+    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY ?? '')
+    // gemini-1.5-flash tiene soporte multimodal (visión) más estable
+    const model = genAI.getGenerativeModel({ model: 'gemini-1.5-flash' })
 
     const result = await model.generateContent([
-      { inlineData: { mimeType: file.type, data: base64 } },
+      { inlineData: { mimeType, data: base64 } },
       { text: OCR_PROMPT },
     ])
 
@@ -86,7 +89,8 @@ export async function POST(req: NextRequest) {
 
     return NextResponse.json({ datos, titulo_foto_url })
   } catch (err) {
-    console.error('Error OCR título:', err)
-    return NextResponse.json({ error: 'Error al procesar la imagen' }, { status: 500 })
+    const msg = err instanceof Error ? err.message : String(err)
+    console.error('Error OCR título:', msg)
+    return NextResponse.json({ error: 'No se pudo analizar la imagen. Asegúrate que el título sea legible y vuelve a intentarlo.' }, { status: 500 })
   }
 }
