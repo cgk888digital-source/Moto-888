@@ -7,6 +7,8 @@ import type { MLRepuesto } from '@/features/chat/types'
 import { rateLimitMiddleware } from '@/lib/rate-limit'
 import { validateRequest, ChatMessageSchema } from '@/lib/validation'
 
+export const dynamic = 'force-dynamic'
+
 const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY ?? '')
 
 function buildSystemPrompt(motoCtx: string, historialCtx: string): string {
@@ -106,32 +108,43 @@ export async function POST(req: NextRequest) {
       return NextResponse.json({ error: 'Datos inválidos', details: validation.errors }, { status: 400 })
     }
 
-    const { moto_id, messages } = validation.data
+    console.log('[Chat API] Iniciando request para moto:', moto_id)
 
     const supabase = await createClient()
     const { data: { user } } = await supabase.auth.getUser()
-    if (!user) return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
+    if (!user) {
+      console.warn('[Chat API] Usuario no autenticado')
+      return NextResponse.json({ error: 'No autenticado' }, { status: 401 })
+    }
 
     // Check plan
-    const { data: profile } = await supabase
+    const { data: profile, error: profileError } = await supabase
       .from('users')
       .select('plan')
       .eq('id', user.id)
       .single()
 
+    if (profileError) {
+      console.error('[Chat API] Error consultando perfil:', profileError)
+    }
+
     if (profile?.plan === 'free') {
+      console.warn('[Chat API] Usuario con plan free intentó usar el chat:', user.email)
       return NextResponse.json({ error: 'El chat requiere plan Pro' }, { status: 403 })
     }
 
     // Contexto de la moto
-    const { data: moto } = await supabase
+    const { data: moto, error: motoError } = await supabase
       .from('motos')
       .select('marca, modelo, ano, km_actuales, tipo_aceite, es_nueva')
       .eq('id', moto_id)
       .eq('user_id', user.id)
       .single()
 
-    if (!moto) return NextResponse.json({ error: 'Moto no encontrada' }, { status: 404 })
+    if (motoError || !moto) {
+      console.error('[Chat API] Moto no encontrada o error:', motoError)
+      return NextResponse.json({ error: 'Moto no encontrada' }, { status: 404 })
+    }
 
     const motoCtx = `${moto.marca} ${moto.modelo} ${moto.ano} | ${moto.km_actuales.toLocaleString()} km | aceite ${moto.tipo_aceite} | ${moto.es_nueva ? 'moto nueva' : 'segunda mano'}`
 
@@ -156,15 +169,28 @@ export async function POST(req: NextRequest) {
     }))
 
     const lastMessage = history.pop()
+    if (!lastMessage) {
+      return NextResponse.json({ error: 'No se enviaron mensajes' }, { status: 400 })
+    }
 
+    console.log('[Chat API] Llamando a Gemini (1.5 Flash)...')
+    
+    // Probar con 1.5 flash que es más estable
     const model = genAI.getGenerativeModel({
-      model: 'gemini-2.0-flash',
+      model: 'gemini-1.5-flash',
       systemInstruction: buildSystemPrompt(motoCtx, historialCtx),
     })
 
     const chat = model.startChat({ history })
-    const result = await chat.sendMessage(lastMessage!.parts[0].text)
+    const result = await chat.sendMessage(lastMessage.parts[0].text)
     const responseText = result.response.text()
+
+    if (!responseText) {
+      console.error('[Chat API] Gemini devolvió una respuesta vacía')
+      throw new Error('Respuesta de IA vacía')
+    }
+
+    console.log('[Chat API] Respuesta de Gemini recibida, procesando diagnóstico...')
 
     // Detectar si hay diagnóstico embebido (regex más flexible)
     const jsonMatch = responseText.match(/```(?:json|JSON)?\s*(\{[\s\S]*?\})\s*```/) || 
@@ -175,20 +201,22 @@ export async function POST(req: NextRequest) {
     if (jsonMatch) {
       try {
         diagnostico = JSON.parse(jsonMatch[1])
+        console.log('[Chat API] Diagnóstico detectado:', diagnostico?.resumen)
 
-        // Buscar repuestos en MercadoLibre en paralelo
+        // Buscar repuestos en MercadoLibre en paralelo (Solo si se solicitan repuestos)
         const repuestos = diagnostico?.repuestos ?? []
         if (repuestos.length > 0) {
+          console.log('[Chat API] Buscando repuestos en MLV:', repuestos)
           const searches = repuestos.slice(0, 3).map(r => buscarEnML(r))
           const resultados = await Promise.all(searches)
           ml_resultados = {}
           repuestos.slice(0, 3).forEach((r, i) => {
-            if (resultados[i].length > 0) ml_resultados![r] = resultados[i]
+            if (resultados[i] && resultados[i].length > 0) ml_resultados![r] = resultados[i]
           })
           if (Object.keys(ml_resultados).length === 0) ml_resultados = null
         }
-      } catch {
-        // ignorar parse errors
+      } catch (parseErr) {
+        console.error('[Chat API] Error parseando JSON de diagnóstico:', parseErr)
       }
     }
 
@@ -196,12 +224,16 @@ export async function POST(req: NextRequest) {
     const cleanText = responseText.replace(/```json[\s\S]*?```/g, '').trim()
 
     return NextResponse.json({
-      reply: cleanText,
+      reply: cleanText || 'Diagnóstico completado. Revisa los detalles arriba.',
       diagnostico,
       ml_resultados,
     })
   } catch (err: any) {
-    console.error('Error en chat AI:', err)
-    return NextResponse.json({ error: 'Error interno del servidor' }, { status: 500 })
+    console.error('[Chat API] Error FATAL:', err.message, err.stack)
+    // Devolver un error más amigable
+    return NextResponse.json({ 
+      error: 'Error en el motor de IA. Intenta reformular tu pregunta.',
+      detail: process.env.NODE_ENV === 'development' ? err.message : undefined 
+    }, { status: 500 })
   }
 }
