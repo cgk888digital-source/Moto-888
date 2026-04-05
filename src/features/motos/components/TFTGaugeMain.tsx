@@ -49,7 +49,30 @@ export function TFTGaugeMain({ km }: Props) {
               <stop offset="0%" stopColor="#00e5ff" />
               <stop offset="100%" stopColor="#00a8ff" />
             </linearGradient>
+            <filter id="needleGlow">
+              <feGaussianBlur in="SourceAlpha" stdDeviation="2" result="blur" />
+              <feFlood floodColor="#00e5ff" result="color" />
+              <feComposite in="color" in2="blur" operator="in" result="glow" />
+              <feMerge>
+                <feMergeNode in="glow" />
+                <feMergeNode in="SourceGraphic" />
+              </feMerge>
+            </filter>
           </defs>
+
+          {/* New Physical Needle */}
+          <g transform={`rotate(${(Math.min(km, 120000) / 120000) * 180 - 0}, 100, 90)`} className="transition-transform duration-1000 ease-out">
+            <line
+              x1="100" y1="90"
+              x2="25" y2="90"
+              stroke="#00e5ff"
+              strokeWidth="3"
+              strokeLinecap="round"
+              filter="url(#needleGlow)"
+              className="animate-needle-swing"
+            />
+            <circle cx="100" cy="90" r="6" fill="#222" stroke="#444" strokeWidth="2" />
+          </g>
         </svg>
 
         {/* Center Display */}
