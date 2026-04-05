@@ -10,11 +10,20 @@ interface Props {
 
 export function TFTGaugeCircular({ comp, onClick, index = 0 }: Props) {
   const isVencido = comp.estado === 'vencido'
+  const isCercano = comp.estado === 'cercano'
   const isProximo = comp.estado === 'proximo'
-  const color = isVencido ? 'var(--neon-red)' : isProximo ? '#f59e0b' : 'var(--neon-cyan)'
+  
+  const color = isVencido 
+    ? 'var(--neon-red)' 
+    : isCercano 
+      ? 'var(--neon-orange)' 
+      : 'var(--neon-yellow)'
+
   const glowClass = isVencido 
     ? 'shadow-neon-red border-neon-red text-neon-red animate-pulse-red hover-premium-red' 
-    : 'shadow-neon-cyan border-neon-cyan text-neon-cyan hover-premium'
+    : isCercano
+      ? 'shadow-neon-orange border-neon-orange text-neon-orange hover-premium'
+      : 'shadow-neon-yellow border-neon-yellow text-neon-yellow hover-premium'
   
   // Staggered entrance delay
   const animationStyle = {
@@ -102,8 +111,8 @@ export function TFTGaugeCircular({ comp, onClick, index = 0 }: Props) {
             VENCIDO
           </div>
         )}
-        {!isVencido && isProximo && (
-          <div className="absolute top-1 bg-amber-500 text-black text-[7px] font-black px-1.5 py-0.5 rounded-sm tracking-tighter uppercase z-10 shadow-lg">
+        {isProximo && (
+          <div className="absolute top-1 bg-neon-yellow text-black text-[7px] font-black px-1.5 py-0.5 rounded-sm tracking-tighter uppercase z-10 shadow-lg">
             SERVICE
           </div>
         )}
@@ -113,7 +122,7 @@ export function TFTGaugeCircular({ comp, onClick, index = 0 }: Props) {
       <span className="mt-2 text-[12px] font-display font-black text-white/90 uppercase tracking-[0.05em] leading-tight">
         {comp.nombre}
       </span>
-      <span className={`text-[10px] font-mono ${isVencido ? 'text-neon-red' : 'text-accent'} font-bold mt-0.5`}>
+      <span className={`text-[10px] font-mono ${isVencido ? 'text-neon-red' : isCercano ? 'text-neon-orange' : 'text-neon-yellow'} font-bold mt-0.5`}>
         {isVencido 
           ? `Expiró: ${comp.kmProximo?.toLocaleString('es-ES')}k` 
           : `Próximo: ${comp.kmProximo?.toLocaleString('es-ES')}k`}

@@ -1,6 +1,6 @@
 import { Tables } from '@/types/database.types'
 
-export type EstadoSalud = 'ok' | 'proximo' | 'vencido' | 'sin-datos'
+export type EstadoSalud = 'ok' | 'proximo' | 'cercano' | 'vencido' | 'sin-datos'
 
 export interface ComponenteSalud {
   id: string
@@ -190,10 +190,10 @@ export function calcularSalud(
     let estado: EstadoSalud
     if (kmRestantes <= 0) {
       estado = 'vencido'
-    } else if (kmRestantes <= ALERTA_KM) {
-      estado = 'proximo'
+    } else if (kmRestantes <= 500) {
+      estado = 'cercano'
     } else {
-      estado = 'ok'
+      estado = 'proximo'
     }
 
     return {

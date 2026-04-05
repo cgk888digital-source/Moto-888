@@ -8,8 +8,8 @@
   --surface: #0a0a0a;
   --surface-2: #121212;
   --border: #1a1a1a;
-  --accent: #00e5ff;
-  --accent-hover: #00b8cc;
+  --accent: #f59e0b;
+  --accent-hover: #d97706;
   --text: #f0f0f0;
   --text-muted: #888888;
   
@@ -17,6 +17,7 @@
   --neon-cyan: #00e5ff;
   --neon-red: #ff003c;
   --neon-yellow: #f59e0b;
+  --neon-orange: #ff8c00;
   --metal-shine: #ffffff40;
 }
 
@@ -82,6 +83,10 @@ body {
   box-shadow: 0 0 15px rgba(255, 0, 60, 0.4), inset 0 0 10px rgba(255, 0, 60, 0.2);
 }
 
+.shadow-neon-orange {
+  box-shadow: 0 0 15px rgba(255, 140, 0, 0.4), inset 0 0 10px rgba(255, 140, 0, 0.2);
+}
+
 .text-neon-cyan {
   text-shadow: 0 0 8px rgba(0, 229, 255, 0.6);
 }
@@ -92,6 +97,10 @@ body {
 
 .text-neon-yellow {
   text-shadow: 0 0 8px rgba(245, 158, 11, 0.6);
+}
+
+.text-neon-orange {
+  text-shadow: 0 0 8px rgba(255, 140, 0, 0.6);
 }
 
 /* Machined Metal Effect */
