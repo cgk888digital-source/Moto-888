@@ -109,7 +109,7 @@ export function TFTGaugeMain({ km }: Props) {
             KILOMETRAJE ACTUAL
           </span>
           <div className="flex items-baseline gap-2">
-            <span className="text-4xl md:text-5xl font-mono font-black text-white tracking-tighter text-neon-cyan leading-none">
+            <span className="text-4xl md:text-5xl font-mono font-black text-white tracking-tighter text-neon-yellow leading-none">
               {formattedKm}
             </span>
             <span className="text-sm font-display font-bold text-text-muted">KM</span>

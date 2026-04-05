@@ -16,6 +16,7 @@
   /* TFT Neon Colors */
   --neon-cyan: #00e5ff;
   --neon-red: #ff003c;
+  --neon-yellow: #f59e0b;
   --metal-shine: #ffffff40;
 }
 
@@ -87,6 +88,10 @@ body {
 
 .text-neon-red {
   text-shadow: 0 0 8px rgba(255, 0, 60, 0.6);
+}
+
+.text-neon-yellow {
+  text-shadow: 0 0 8px rgba(245, 158, 11, 0.6);
 }
 
 /* Machined Metal Effect */
