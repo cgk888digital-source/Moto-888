@@ -19,10 +19,11 @@ export function SaludGridClient({ motoId, componentes }: Props) {
     <div className="flex flex-col gap-6">
       {/* Grid 2 columnas x 4 filas — as requested */}
       <div className="grid grid-cols-2 gap-x-2 gap-y-6 justify-items-center">
-        {componentes.slice(0, 8).map((comp) => (
+        {componentes.slice(0, 8).map((comp, index) => (
           <TFTGaugeCircular
             key={comp.id}
             comp={comp}
+            index={index}
             onClick={() => setSelectedComp(comp)}
           />
         ))}

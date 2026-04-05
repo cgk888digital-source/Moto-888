@@ -5,13 +5,21 @@ import { TFTIcons } from './TFTIcons'
 interface Props {
   comp: ComponenteSalud
   onClick: () => void
+  index?: number
 }
 
-export function TFTGaugeCircular({ comp, onClick }: Props) {
+export function TFTGaugeCircular({ comp, onClick, index = 0 }: Props) {
   const isVencido = comp.estado === 'vencido'
   const isProximo = comp.estado === 'proximo'
   const color = isVencido ? 'var(--neon-red)' : isProximo ? '#f59e0b' : 'var(--neon-cyan)'
-  const glowClass = isVencido ? 'shadow-neon-red border-neon-red text-neon-red animate-pulse-red' : 'shadow-neon-cyan border-neon-cyan text-neon-cyan'
+  const glowClass = isVencido 
+    ? 'shadow-neon-red border-neon-red text-neon-red animate-pulse-red hover-premium-red' 
+    : 'shadow-neon-cyan border-neon-cyan text-neon-cyan hover-premium'
+  
+  // Staggered entrance delay
+  const animationStyle = {
+    animationDelay: `${index * 0.08}s`,
+  }
   
   // Porcentaje de salud (100% = Nuevo, 0% = Vencido)
   const kmRestantes = comp.kmProximo ? (comp.kmProximo - comp.kmActuales) : 0
@@ -30,7 +38,8 @@ export function TFTGaugeCircular({ comp, onClick }: Props) {
   return (
     <button
       onClick={onClick}
-      className="relative group flex flex-col items-center justify-center p-2 transition-all active:scale-95"
+      style={animationStyle}
+      className={`relative group flex flex-col items-center justify-center p-2 transition-all active:scale-95 animate-enter`}
     >
       <div className={`relative w-24 h-24 rounded-full bg-metal flex items-center justify-center p-2 overflow-hidden ${glowClass} border-[3px] shadow-[inset_0_2px_10px_rgba(0,0,0,0.8),0_5px_15px_rgba(0,0,0,0.5)]`}>
         {/* Internal Background Shade */}

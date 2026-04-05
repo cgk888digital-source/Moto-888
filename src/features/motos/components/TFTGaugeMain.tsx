@@ -1,14 +1,40 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 
 interface Props {
   km: number
 }
 
 export function TFTGaugeMain({ km }: Props) {
-  const formattedKm = km.toLocaleString('es-ES')
+  const [displayKm, setDisplayKm] = useState(0)
+
+  useEffect(() => {
+    let start = 0
+    const end = km
+    const duration = 1000 // ms
+    const startTime = performance.now()
+
+    const animate = (currentTime: number) => {
+      const elapsed = currentTime - startTime
+      const progress = Math.min(elapsed / duration, 1)
+      
+      // easeOutExpo for a premium feel
+      const easeProgress = progress === 1 ? 1 : 1 - Math.pow(2, -10 * progress)
+      
+      const currentKm = Math.floor(easeProgress * end)
+      setDisplayKm(currentKm)
+
+      if (progress < 1) {
+        requestAnimationFrame(animate)
+      }
+    }
+
+    requestAnimationFrame(animate)
+  }, [km])
+
+  const formattedKm = displayKm.toLocaleString('es-ES')
   
   return (
-    <div className="relative flex flex-col items-center justify-center pt-8 pb-12 overflow-hidden">
+    <div className="relative flex flex-col items-center justify-center pt-8 pb-12 overflow-hidden animate-enter">
       {/* The Semicircle Arc (Tachometer style) */}
       <div className="relative w-[80vw] max-w-[400px] aspect-[2/1] flex items-center justify-center">
         <svg viewBox="0 0 200 100" className="w-full drop-shadow-[0_0_15px_rgba(0,229,255,0.4)]">

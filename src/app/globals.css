@@ -105,14 +105,42 @@ body {
   animation: pulse-red 1.5s infinite ease-in-out;
 }
 
-/* Needle Swing */
+/* Entrance Animations */
+@keyframes enter-dashboard {
+  from { opacity: 0; transform: translateY(20px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.animate-enter {
+  animation: enter-dashboard 0.4s ease-out forwards;
+  opacity: 0; /* Star value before animation */
+}
+
+/* Premium Hover/Tap Micro-Interactions */
+.hover-premium {
+  @apply transition-all duration-150 ease-in-out;
+}
+.hover-premium:hover {
+  transform: scale(1.03);
+  filter: brightness(1.1) drop-shadow(0 0 12px rgba(0, 229, 255, 0.4));
+}
+.hover-premium:active {
+  transform: scale(0.97);
+}
+
+.hover-premium-red:hover {
+  transform: scale(1.03);
+  filter: brightness(1.1) drop-shadow(0 0 12px rgba(255, 0, 60, 0.4));
+}
+
+/* Needle Swing with subtle variation */
 @keyframes needle-swing {
-  0% { transform: rotate(-5deg); }
-  50% { transform: rotate(5deg); }
-  100% { transform: rotate(-5deg); }
+  0% { transform: rotate(-3deg); }
+  50% { transform: rotate(3deg); }
+  100% { transform: rotate(-3deg); }
 }
 .animate-needle-swing {
-  animation: needle-swing 4s infinite ease-in-out;
+  animation: needle-swing 3s infinite ease-in-out;
 }
 
 @keyframes fade-in {
