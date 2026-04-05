@@ -113,7 +113,7 @@ export function TFTGaugeCircular({ comp, onClick, index = 0 }: Props) {
       <span className="mt-2 text-[10px] font-display font-black text-white/90 uppercase tracking-[0.05em] leading-tight">
         {comp.nombre}
       </span>
-      <span className={`text-[8px] font-mono ${isVencido ? 'text-neon-red' : isProximo ? 'text-neon-yellow' : 'text-text-muted'} font-bold mt-0.5`}>
+      <span className={`text-[8px] font-mono ${isVencido ? 'text-neon-red' : 'text-accent'} font-bold mt-0.5`}>
         {isVencido 
           ? `Expiró: ${comp.kmProximo?.toLocaleString('es-ES')}k` 
           : `Próximo: ${comp.kmProximo?.toLocaleString('es-ES')}k`}
