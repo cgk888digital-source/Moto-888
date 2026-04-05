@@ -193,7 +193,7 @@ export function calcularSalud(
     } else if (kmRestantes <= 500) {
       estado = 'cercano'
     } else {
-      estado = 'proximo'
+      estado = 'ok'
     }
 
     return {

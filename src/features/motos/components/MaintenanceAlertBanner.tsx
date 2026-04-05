@@ -28,7 +28,7 @@ export function MaintenanceAlertBanner({ componentes }: Props) {
         <span className="text-xl">{icon}</span>
         <div className="flex-1">
           <p className="text-[10px] font-display font-black uppercase tracking-widest opacity-70">
-            {isVencido ? 'Mantenimiento Vencido' : 'Próximo Mantenimiento'}
+            {isVencido ? 'Mantenimiento Crítico' : 'Aviso de Mantenimiento'}
           </p>
           <p className="text-sm font-bold leading-tight">
             {isVencido 

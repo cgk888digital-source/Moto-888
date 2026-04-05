@@ -56,7 +56,7 @@ export function TFTGaugeCircular({ comp, onClick, index = 0 }: Props) {
 
         {/* Info Labels inside gauge */}
         <div className="absolute inset-0 flex flex-col items-center justify-center pt-8">
-           <div className={`w-7 h-7 ${isVencido ? 'text-neon-red' : 'text-neon-cyan'} opacity-80 mt-1`}>
+           <div className={`w-7 h-7 ${isVencido ? 'text-neon-red' : isCercano ? 'text-neon-orange' : 'text-neon-yellow'} opacity-80 mt-1`}>
             <Icon />
           </div>
         </div>
@@ -111,8 +111,8 @@ export function TFTGaugeCircular({ comp, onClick, index = 0 }: Props) {
             VENCIDO
           </div>
         )}
-        {isProximo && (
-          <div className="absolute top-1 bg-neon-yellow text-black text-[7px] font-black px-1.5 py-0.5 rounded-sm tracking-tighter uppercase z-10 shadow-lg">
+        {!isVencido && (isCercano || isProximo) && (
+          <div className={`absolute top-1 ${isCercano ? 'bg-neon-orange shadow-glow-orange' : 'bg-neon-yellow shadow-glow-yellow'} text-black text-[7px] font-black px-1.5 py-0.5 rounded-sm tracking-tighter uppercase z-10 shadow-lg`}>
             SERVICE
           </div>
         )}

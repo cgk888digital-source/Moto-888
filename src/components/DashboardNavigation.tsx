@@ -30,8 +30,8 @@ export function DashboardNavigation() {
               href={href}
               className={`flex items-center gap-1.5 px-3 py-2 text-xs font-display font-bold uppercase tracking-wider whitespace-nowrap border-b-2 transition-all ${
                 isActive 
-                  ? 'text-accent border-accent text-neon-yellow' 
-                  : 'text-accent/60 border-transparent hover:text-accent hover:border-white/20'
+                  ? 'text-accent border-accent brightness-110 shadow-[0_0_10px_rgba(245,158,11,0.3)]' 
+                  : 'text-accent border-transparent brightness-[0.6] hover:brightness-100 hover:border-white/20'
               }`}
             >
               <span>{icon}</span>
@@ -42,7 +42,7 @@ export function DashboardNavigation() {
       </div>
 
       {/* Mobile bottom nav — hidden on md+ */}
-      <nav className="fixed bottom-0 inset-x-0 z-30 bg-surface border-t border-white/5 md:hidden safe-area-inset-bottom shadow-[0_-10px_30px_rgba(0,0,0,0.5)]">
+      <nav className="fixed bottom-0 inset-x-0 z-30 bg-surface border-t border-white/5 md:hidden safe-area-inset-bottom shadow-[0_-10px_40px_rgba(0,0,0,0.8)]">
         <div className="flex items-stretch h-16">
           {NAV.map(({ href, label, icon }) => {
             const isActive = pathname === href
@@ -51,14 +51,15 @@ export function DashboardNavigation() {
                 key={href}
                 href={href}
                 className={`flex flex-col items-center justify-center flex-1 gap-1 transition-all min-w-0 py-1 ${
-                  isActive ? 'text-accent text-neon-yellow' : 'text-accent'
+                  isActive ? 'text-accent' : 'text-accent brightness-[0.7]'
                 }`}
               >
-                <span className={`text-xl leading-none transition-transform ${isActive ? 'scale-110 drop-shadow-[0_0_8px_rgba(245,158,11,0.4)]' : 'opacity-80'}`}>{icon}</span>
-                <span className={`text-[8px] font-display font-bold uppercase tracking-tighter truncate w-full text-center px-0.5 ${isActive ? 'opacity-100' : 'opacity-60'}`}>
+                <span className={`text-xl leading-none transition-all ${isActive ? 'scale-115 drop-shadow-[0_0_8px_rgba(245,158,11,0.6)]' : ''}`}>{icon}</span>
+                <span className={`text-[8px] font-display font-black uppercase tracking-tighter truncate w-full text-center px-0.5 leading-none`}>
                   {label}
                 </span>
-                {isActive && <div className="w-1 h-1 bg-accent rounded-full shadow-[0_0_8px_var(--neon-yellow)]" />}
+                {isActive && <div className="absolute top-0 w-8 h-[2px] bg-accent shadow-[0_0_12px_rgba(245,158,11,1)]" />}
+                {isActive && <div className="w-1 h-1 bg-accent rounded-full mt-0.5 shadow-[0_0_8px_rgba(245,158,11,1)]" />}
               </Link>
             )
           })}

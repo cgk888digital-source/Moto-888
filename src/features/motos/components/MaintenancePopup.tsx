@@ -9,14 +9,14 @@ interface Props {
 }
 
 const CONSECUENCIAS: Record<string, string> = {
-  aceite: 'Daño severo en el motor por fricción. Una reparación de motor cuesta 20x más que un cambio de aceite.',
-  cadena: 'Riesgo inminente de ruptura en marcha y desgaste acelerado de toda la transmisión.',
-  frenos: 'Pérdida crítica de capacidad de frenado. Tu seguridad y la de otros depende de tus frenos.',
-  'filtro-aire': 'Aumento de consumo de combustible y pérdida de potencia. Tu motor "no respira" bien.',
-  bujias: 'Fallos de encendido y combustión ineficiente que daña internamente los cilindros.',
-  suspensiones: 'Inestabilidad peligrosa en curvas y frenado. Afecta directamente el control de la moto.',
-  valvulas: 'Pérdida de compresión y sobrecalentamiento. Puede causar daños permanentes en la culata.',
-  general: 'Un mantenimiento vencido reduce drásticamente la vida útil y el valor de reventa de tu moto.',
+  aceite: 'Desgaste acelerado del motor por fricción. Ignorarlo resultará en pérdida de potencia, ruidos internos y finalmente un motor fundido muy costoso.',
+  cadena: 'Riesgo inminente de ruptura. Una cadena rota puede bloquear la rueda trasera causar una caída grave o destruir el cárter del motor.',
+  frenos: 'Distancias de frenado peligrosamente largas y riesgo de pérdida absoluta de control. Tu capacidad de detenerte ante un obstáculo es nula.',
+  'filtro-aire': 'El motor "respira" suciedad, aumentando el consumo de combustible y carbonizando las bujías, lo que reduce la vida útil total.',
+  bujias: 'Combustión ineficiente que genera tirones, mayor consumo y dificultad de encendido excesivo, forzando la batería y el motor de arranque.',
+  suspensiones: 'Pérdida de tracción en baches y curvas. La moto se vuelve inestable y peligrosa de manejar a altas velocidades.',
+  valvulas: 'Desajuste que provoca ruidos metálicos y, en casos graves, daños permanentes en la culata. La moto perderá su suavidad original.',
+  general: 'Un mantenimiento vencido reduce el valor de reventa de tu moto y compromete seriamente tu seguridad y la de tu acompañante.',
 }
 
 export function MaintenancePopup({ componentes, onResolver }: Props) {
@@ -24,14 +24,15 @@ export function MaintenancePopup({ componentes, onResolver }: Props) {
   const [compVencido, setCompVencido] = useState<ComponenteSalud | null>(null)
 
   useEffect(() => {
+    // Buscar componentes vencidos
     const vencidos = componentes.filter(c => c.estado === 'vencido')
     if (vencidos.length === 0) return
 
     const lastSnooze = localStorage.getItem('maintenance_popup_snooze')
     const now = Date.now()
-    const SNOOZE_TIME = 24 * 60 * 60 * 1000 // 24 horas
+    const MS_PER_DAY = 24 * 60 * 60 * 1000
 
-    if (!lastSnooze || (now - Number(lastSnooze)) > SNOOZE_TIME) {
+    if (!lastSnooze || (now - parseInt(lastSnooze)) > MS_PER_DAY) {
       setCompVencido(vencidos[0])
       setIsOpen(true)
     }
@@ -45,35 +46,43 @@ export function MaintenancePopup({ componentes, onResolver }: Props) {
   if (!isOpen || !compVencido) return null
 
   const consecuencia = CONSECUENCIAS[compVencido.id] || CONSECUENCIAS.general
+  const kmVencimiento = Math.abs(compVencido.kmRestantes ?? 0)
 
   return (
-    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm animate-fade-in">
-      <div className="bg-surface border-2 border-neon-red/30 rounded-3xl w-full max-w-sm overflow-hidden shadow-[0_0_50px_rgba(255,0,60,0.2)]">
-        {/* Header Alert */}
+    <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/90 backdrop-blur-sm animate-fade-in">
+      <div className="bg-surface border-2 border-neon-red/30 rounded-3xl w-full max-w-sm overflow-hidden shadow-[0_0_80px_rgba(255,0,60,0.3)]">
+        {/* Header Alert - High Impact */}
         <div className="bg-neon-red px-6 py-4 flex items-center gap-3">
-          <span className="text-2xl animate-pulse">🔧</span>
-          <h2 className="text-white font-display font-black uppercase tracking-wider">
+          <span className="text-2xl animate-pulse">📢</span>
+          <h2 className="text-white font-display font-black uppercase tracking-wider text-sm">
             Mantenimiento Requerido
           </h2>
         </div>
 
         {/* Content */}
         <div className="px-6 py-6 pb-4">
-          <p className="text-white font-bold text-lg mb-2 leading-tight">
-            Tu {compVencido.nombre} está vencido desde hace {Math.abs(compVencido.kmRestantes ?? 0).toLocaleString('es-ES')} km.
-          </p>
-          <p className="text-text-muted text-sm leading-relaxed mb-6 font-medium">
-            {consecuencia}
-          </p>
-          
-          <div className="p-3 bg-neon-red/10 border border-neon-red/20 rounded-xl mb-6">
-            <p className="text-[10px] text-neon-red font-black uppercase tracking-widest mb-1 italic">
-              Consecuencia Real:
-            </p>
-            <p className="text-xs text-neon-red/90 font-bold leading-tight uppercase">
-              Riesgo de falla crítica y compromiso de seguridad.
+          <div className="mb-4">
+            <h3 className="text-white font-display font-bold text-[10px] uppercase tracking-widest opacity-60 mb-1">
+              Estado Crítico
+            </h3>
+            <p className="text-white font-black text-xl leading-tight">
+              Tu {compVencido.nombre} está vencido desde hace <span className="text-neon-red">{kmVencimiento.toLocaleString('es-ES')} km</span>.
             </p>
           </div>
+          
+          <div className="p-4 bg-neon-red/10 border border-neon-red/20 rounded-xl mb-6">
+            <p className="text-[9px] text-neon-red font-black uppercase tracking-widest mb-2 flex items-center gap-2">
+              <span className="w-1.5 h-1.5 bg-neon-red rounded-full animate-pulse" />
+              Impacto & Riesgo Real:
+            </p>
+            <p className="text-sm text-white/90 font-bold leading-relaxed">
+              {consecuencia}
+            </p>
+          </div>
+          
+          <p className="text-text-muted text-[10px] italic text-center font-medium opacity-50 px-4">
+            Ignorar un mantenimiento puede resultar en accidentes o reparaciones de alto costo.
+          </p>
         </div>
 
         {/* Actions */}
