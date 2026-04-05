@@ -39,7 +39,7 @@ export function TFTGaugeMain({ km }: Props) {
     <div className="relative flex flex-col items-center justify-center pt-8 pb-12 overflow-hidden animate-enter">
       {/* The Semicircle Arc (Tachometer style) */}
       <div className="relative w-[80vw] max-w-[400px] aspect-[2/1] flex items-center justify-center">
-        <svg viewBox="0 0 200 100" className="w-full drop-shadow-[0_0_15px_rgba(0,229,255,0.4)]">
+        <svg viewBox="0 0 200 100" className="w-full drop-shadow-[0_0_15px_rgba(245,158,11,0.3)]">
           {/* Background Arc */}
           <path
             d="M 20 90 A 80 80 0 0 1 180 90"
@@ -48,11 +48,11 @@ export function TFTGaugeMain({ km }: Props) {
             strokeWidth="12"
             strokeLinecap="round"
           />
-          {/* Progress Arc (Cyan Glow) */}
+          {/* Progress Arc (Yellow Glow) */}
           <path
             d="M 20 90 A 80 80 0 0 1 180 90"
             fill="none"
-            stroke="url(#cyanGradient)"
+            stroke="url(#yellowGradient)"
             strokeWidth="12"
             strokeLinecap="round"
             strokeDasharray="251"
@@ -68,18 +68,18 @@ export function TFTGaugeMain({ km }: Props) {
             const x2 = 100 + 85 * Math.cos((180 + angle) * Math.PI / 180)
             const y2 = 90 + 85 * Math.sin((180 + angle) * Math.PI / 180)
             return (
-              <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke={i % 2 === 0 ? "#00e5ff" : "#555"} strokeWidth="1" />
+              <line key={i} x1={x1} y1={y1} x2={x2} y2={y2} stroke={i % 2 === 0 ? "var(--neon-yellow)" : "#555"} strokeWidth="1" />
             )
           })}
 
           <defs>
-            <linearGradient id="cyanGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-              <stop offset="0%" stopColor="#00e5ff" />
-              <stop offset="100%" stopColor="#00a8ff" />
+            <linearGradient id="yellowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+              <stop offset="0%" stopColor="#f59e0b" />
+              <stop offset="100%" stopColor="#fbbf24" />
             </linearGradient>
             <filter id="needleGlow">
               <feGaussianBlur in="SourceAlpha" stdDeviation="2" result="blur" />
-              <feFlood floodColor="#00e5ff" result="color" />
+              <feFlood floodColor="#f59e0b" result="color" />
               <feComposite in="color" in2="blur" operator="in" result="glow" />
               <feMerge>
                 <feMergeNode in="glow" />
@@ -93,7 +93,7 @@ export function TFTGaugeMain({ km }: Props) {
             <line
               x1="100" y1="90"
               x2="25" y2="90"
-              stroke="#00e5ff"
+              stroke="var(--neon-yellow)"
               strokeWidth="3"
               strokeLinecap="round"
               filter="url(#needleGlow)"
@@ -119,7 +119,7 @@ export function TFTGaugeMain({ km }: Props) {
 
       {/* Decorative Bezel Base */}
       <div className="w-[90%] h-4 bg-metal rounded-b-3xl -mt-2 opacity-80" />
-      <div className="w-[70%] h-1 bg-neon-cyan/20 blur-sm -mt-0.5" />
+      <div className="w-[70%] h-1 bg-neon-yellow/20 blur-sm -mt-0.5" />
     </div>
   )
 }
