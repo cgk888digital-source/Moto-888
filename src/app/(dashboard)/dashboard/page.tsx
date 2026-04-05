@@ -21,7 +21,7 @@ export default async function DashboardPage() {
       {/* Greeting */}
       <div className="mb-8">
         <h1 className="font-display text-3xl font-bold text-text-base uppercase tracking-wide">
-          Hola, {nombre}
+          Hola, {nombre} <span className="text-[10px] text-neon-cyan opacity-50 ml-2">TFT-CONTROL v2.0</span>
         </h1>
         <p className="text-text-muted font-body text-sm mt-1">
           {motos.length === 1
