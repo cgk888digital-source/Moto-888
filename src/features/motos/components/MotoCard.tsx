@@ -28,10 +28,10 @@ export function MotoCard({ moto }: Props) {
       <nav className="px-6 py-4 flex gap-4" aria-label="Acciones de moto">
         <Link
           href={`/chat/${moto.id}`}
-          className="flex-1 bg-white/5 hover:bg-white/10 text-[#00e5ff] font-display font-black tracking-widest px-6 py-4 rounded-xl border border-[#00e5ff]/20 text-center uppercase text-xs transition-colors"
-          aria-label={`Iniciar chat IA con ${moto.marca} ${moto.modelo}`}
+          className="flex-1 bg-white/5 hover:bg-white/10 text-[#00e5ff] font-display font-black tracking-widest px-4 py-3 rounded-xl border border-[#00e5ff]/20 text-center uppercase text-[10px] md:text-xs transition-colors flex items-center justify-center leading-tight"
+          aria-label={`Consultar a tu mecánico personal IA para ${moto.marca} ${moto.modelo}`}
         >
-          💬 Chat IA
+          🛠️ Tu Mecánico Personal IA
         </Link>
         <Link
           href={`/mantenimiento/${moto.id}`}

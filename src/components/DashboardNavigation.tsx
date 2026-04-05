@@ -30,8 +30,8 @@ export function DashboardNavigation() {
               href={href}
               className={`flex items-center gap-1.5 px-3 py-2 text-xs font-display font-bold uppercase tracking-wider whitespace-nowrap border-b-2 transition-all ${
                 isActive 
-                  ? 'text-[#00e5ff] border-[#00e5ff] text-neon-cyan' 
-                  : 'text-text-muted border-transparent hover:text-text-base hover:border-white/20'
+                  ? 'text-accent border-accent text-neon-yellow' 
+                  : 'text-accent/60 border-transparent hover:text-accent hover:border-white/20'
               }`}
             >
               <span>{icon}</span>
@@ -51,14 +51,14 @@ export function DashboardNavigation() {
                 key={href}
                 href={href}
                 className={`flex flex-col items-center justify-center flex-1 gap-1 transition-all min-w-0 py-1 ${
-                  isActive ? 'text-[#00e5ff] text-neon-cyan' : 'text-text-muted'
+                  isActive ? 'text-accent text-neon-yellow' : 'text-accent'
                 }`}
               >
-                <span className={`text-xl leading-none transition-transform ${isActive ? 'scale-110' : ''}`}>{icon}</span>
+                <span className={`text-xl leading-none transition-transform ${isActive ? 'scale-110 drop-shadow-[0_0_8px_rgba(245,158,11,0.4)]' : 'opacity-80'}`}>{icon}</span>
                 <span className={`text-[8px] font-display font-bold uppercase tracking-tighter truncate w-full text-center px-0.5 ${isActive ? 'opacity-100' : 'opacity-60'}`}>
                   {label}
                 </span>
-                {isActive && <div className="w-1 h-1 bg-[#00e5ff] rounded-full shadow-neon-cyan" />}
+                {isActive && <div className="w-1 h-1 bg-accent rounded-full shadow-[0_0_8px_var(--neon-yellow)]" />}
               </Link>
             )
           })}
