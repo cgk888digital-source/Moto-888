@@ -145,7 +145,7 @@ const COMPONENTES_CONFIG = [
   },
 ] as const
 
-const ALERTA_KM = 1500 // margen para estado "próximo" (incrementado para mejor visibilidad)
+const ALERTA_KM = 200 // margen para estado "próximo"
 
 export function calcularSalud(
   mantenimientos: Pick<Tables<'mantenimientos'>, 'tipo_servicio' | 'km_al_servicio' | 'proximo_km' | 'fecha'>[],

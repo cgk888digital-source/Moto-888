@@ -11,12 +11,10 @@ interface Props {
 export function TFTGaugeCircular({ comp, onClick, index = 0 }: Props) {
   const isVencido = comp.estado === 'vencido'
   const isProximo = comp.estado === 'proximo'
-  const color = isVencido ? 'var(--neon-red)' : isProximo ? 'var(--neon-yellow)' : 'var(--neon-cyan)'
+  const color = isVencido ? 'var(--neon-red)' : isProximo ? '#f59e0b' : 'var(--neon-cyan)'
   const glowClass = isVencido 
     ? 'shadow-neon-red border-neon-red text-neon-red animate-pulse-red hover-premium-red' 
-    : isProximo 
-      ? 'shadow-neon-yellow border-[#f59e0b]/50 text-neon-yellow hover-premium'
-      : 'shadow-neon-cyan border-neon-cyan text-neon-cyan hover-premium'
+    : 'shadow-neon-cyan border-neon-cyan text-neon-cyan hover-premium'
   
   // Staggered entrance delay
   const animationStyle = {
@@ -28,11 +26,12 @@ export function TFTGaugeCircular({ comp, onClick, index = 0 }: Props) {
   const healthPct = Math.min(100, Math.max(0, (kmRestantes / comp.intervalo) * 100))
   
   const circumference = 2 * Math.PI * 36
-  const arcTotalLength = (240 / 360) * circumference
-  const strokeDashoffset = arcTotalLength - (healthPct / 100) * arcTotalLength
+  // Arco visual: de 150 a 390 grados (240 grados total)
+  const arcLength = (240 / 360) * circumference
+  const strokeDashoffset = arcLength - (healthPct / 100) * arcLength
   
-  // Needle Rotation: 150deg (Start/100% health) to 390deg (End/0% health)
-  const needleRotation = 150 + (1 - healthPct / 100) * 240
+  // Needle Rotation: Salud 100% -> -120deg, Salud 0% -> 120deg
+  const needleRotation = 120 - (healthPct / 100) * 240
 
   const Icon = TFTIcons[comp.id as keyof typeof TFTIcons] || TFTIcons.general
 
@@ -48,14 +47,14 @@ export function TFTGaugeCircular({ comp, onClick, index = 0 }: Props) {
 
         {/* Info Labels inside gauge */}
         <div className="absolute inset-0 flex flex-col items-center justify-center pt-8">
-           <div className={`w-7 h-7 ${isVencido ? 'text-neon-red' : isProximo ? 'text-neon-yellow' : 'text-neon-cyan'} opacity-80 mt-1`}>
+           <div className={`w-7 h-7 ${isVencido ? 'text-neon-red' : 'text-neon-cyan'} opacity-80 mt-1`}>
             <Icon />
           </div>
         </div>
 
         {/* Progress Arc & Needle */}
         <svg viewBox="0 0 80 80" className="absolute inset-0">
-          {/* Background Track Arc - Grayish */}
+          {/* Background Track Arc */}
           <circle
             cx="40"
             cy="40"
@@ -63,7 +62,7 @@ export function TFTGaugeCircular({ comp, onClick, index = 0 }: Props) {
             fill="none"
             stroke="rgba(255,255,255,0.05)"
             strokeWidth="4"
-            strokeDasharray={`${arcTotalLength} ${circumference}`}
+            strokeDasharray={`${arcLength} ${circumference}`}
             strokeLinecap="round"
             transform="rotate(150 40 40)"
           />
@@ -75,7 +74,7 @@ export function TFTGaugeCircular({ comp, onClick, index = 0 }: Props) {
             fill="none"
             stroke={color}
             strokeWidth="4"
-            strokeDasharray={`${arcTotalLength} ${circumference}`}
+            strokeDasharray={`${arcLength} ${circumference}`}
             strokeDashoffset={strokeDashoffset}
             strokeLinecap="round"
             transform="rotate(150 40 40)"
@@ -87,7 +86,7 @@ export function TFTGaugeCircular({ comp, onClick, index = 0 }: Props) {
             <line
               x1="40" y1="40"
               x2="40" y2="12"
-              stroke={isVencido ? 'var(--neon-red)' : isProximo ? 'var(--neon-yellow)' : 'white'}
+              stroke={isVencido ? '#ff4d4d' : '#ffffff'}
               strokeWidth="2"
               strokeLinecap="round"
               className="animate-needle-swing"
@@ -104,7 +103,7 @@ export function TFTGaugeCircular({ comp, onClick, index = 0 }: Props) {
           </div>
         )}
         {!isVencido && isProximo && (
-          <div className="absolute top-1 bg-[#f59e0b] text-black text-[7px] font-black px-1.5 py-0.5 rounded-sm tracking-tighter uppercase z-10 shadow-lg">
+          <div className="absolute top-1 bg-amber-500 text-black text-[7px] font-black px-1.5 py-0.5 rounded-sm tracking-tighter uppercase z-10 shadow-lg">
             SERVICE
           </div>
         )}
