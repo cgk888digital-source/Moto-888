@@ -2,6 +2,7 @@ import { Suspense } from 'react'
 import type { Tables } from '@/types/database.types'
 import { SaludGrid } from './SaludGrid'
 import { MotoHeader } from './MotoHeader'
+import { TFTGaugeMain } from './TFTGaugeMain'
 import Link from 'next/link'
 
 interface Props {
@@ -10,10 +11,11 @@ interface Props {
 
 export function MotoCard({ moto }: Props) {
   return (
-    <article className="bg-surface border border-border rounded-2xl overflow-hidden" aria-label={`Moto: ${moto.marca} ${moto.modelo}`}>
+    <article className="bg-carbon border border-white/5 rounded-3xl overflow-hidden shadow-2xl pb-6" aria-label={`Moto: ${moto.marca} ${moto.modelo}`}>
       <MotoHeader moto={moto} />
 
-      {/* Sección eliminada según solicitud del usuario para limpiar la vista principal */}
+      {/* Main Gauge Section */}
+      <TFTGaugeMain km={moto.km_actuales} />
 
       <Suspense fallback={<SaludSkeleton />}>
         <SaludGrid
@@ -23,20 +25,20 @@ export function MotoCard({ moto }: Props) {
         />
       </Suspense>
 
-      <nav className="px-6 py-4 flex gap-3 border-t border-border" aria-label="Acciones de moto">
+      <nav className="px-6 py-4 flex gap-4" aria-label="Acciones de moto">
         <Link
           href={`/chat/${moto.id}`}
-          className="btn-primary flex-1 text-center"
+          className="flex-1 bg-white/5 hover:bg-white/10 text-[#00e5ff] font-display font-black tracking-widest px-6 py-4 rounded-xl border border-[#00e5ff]/20 text-center uppercase text-xs transition-colors"
           aria-label={`Iniciar chat IA con ${moto.marca} ${moto.modelo}`}
         >
           💬 Chat IA
         </Link>
         <Link
           href={`/mantenimiento/${moto.id}`}
-          className="btn-ghost px-4 py-3"
+          className="px-6 py-4 rounded-xl bg-white/5 hover:bg-white/10 text-text-muted transition-colors border border-white/5"
           aria-label={`Ver mantenimiento de ${moto.marca} ${moto.modelo}`}
         >
-          🔧 Mantenimiento
+          🔧
         </Link>
       </nav>
     </article>

@@ -29,7 +29,7 @@ export async function SaludGrid({ motoId, kmActuales, tipoAceite }: Props) {
   const proximos = componentes.filter((c) => c.estado === 'proximo').length
 
   return (
-    <div className="px-6 py-4 border-t border-border">
+    <div className="py-4">
       <SaludGridClient 
         motoId={motoId} 
         componentes={componentes} 
